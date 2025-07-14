@@ -18,6 +18,5 @@ def result():
 #If statement is a safety check to make sure flask only runs when the file is run directly and not imported from another file
 if __name__ == '__main__':
 
-    #app.run will make the program run until it's actively stopped
-    #debug=True will cause the program to keep 
-    app.run(debug=True)
+    #The host='0.0.0.0' is to make every IP address my computer knows about, be able to recieve requests
+    app.run(host='0.0.0.0', port=8080)
