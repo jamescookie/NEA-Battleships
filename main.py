@@ -1,13 +1,17 @@
 #importing library called flask, which is a web application (something that recieves requests from a browser and responses from a program)
-from flask import Flask, request, render_template_string
+from flask import Flask, request, render_template
 
 #__name__ is a built in python variable of the current program being passed to flask
 app = Flask(__name__)
 
-#Creates the path for the browser
-#When you type /hello the function runs
-@app.route('/hello', methods=['POST'])
+#When you type '/' into the browser, this program sends the browser which page to show
+@app.route('/', methods=['GET'])
+def home():
+    return render_template('battleships.html')
 
+#When you submit the form, this method runs
+#The path and the method on the program and the form have to match up so they can talk to each other
+@app.route('/hello', methods=['POST'])
 def result():
     #Recieving an input from the web page (should be a first name)
     #.form is the contents from the html code
