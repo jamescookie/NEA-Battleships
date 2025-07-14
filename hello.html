@@ -1,0 +1,28 @@
+<!--Telling the browser what type of html it is-->
+<!DOCTYPE html>
+<!--Creates the html-->
+<html>
+<!--Creates the header-->
+<head>
+    <!--Makes the name of the web page-->
+    <title>Simple Text Box Page</title>
+<!--Closes the header-->
+</head>
+<!--Opens the body-->
+<body>
+    <!--Creates and closes the title-->
+    <h1>Enter Something</h1>
+    
+    <!--form: information to submit, action: Where to send it, method: How to send it-->
+    <form action="http://localhost:8080/hello" method="POST">
+
+        <!--input: The user will input something, type: What will you be entering, name: name of the variable that will be sending to the program, placeholder: helpful text-->
+        <input type="text" name="firstName" placeholder="Type here..." />
+
+        <!--button: something you can click, type: What the button will do, Click ME: The text on the button-->
+        <button type="submit">Click ME</button>
+    
+    <!--Closing tags-->
+    </form>
+</body>
+</html>

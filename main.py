@@ -1,19 +1,21 @@
 #importing library called flask, which is a web application (something that recieves requests from a browser and responses from a program)
-from flask import Flask, request
+from flask import Flask, request, render_template_string
 
 #__name__ is a built in python variable of the current program being passed to flask
 app = Flask(__name__)
 
 #Creates the path for the browser
 #When you type /hello the function runs
-@app.route('/hello', methods=['GET'])
+@app.route('/hello', methods=['POST'])
 
 def result():
-    #The program will say "hello" when you type the URL in
-    print("hello")
+    #Recieving an input from the web page (should be a first name)
+    #.form is the contents from the html code
+    name = request.form['firstName']
+    print("hello", name)
 
     #This is what appears on the browser
-    return 'Received !'
+    return ("hello " + name)
 
 #If statement is a safety check to make sure flask only runs when the file is run directly and not imported from another file
 if __name__ == '__main__':
