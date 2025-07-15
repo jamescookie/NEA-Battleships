@@ -11,18 +11,24 @@ def home():
 
 #When you submit the form, this method runs
 #The path and the method on the program and the form have to match up so they can talk to each other
-@app.route('/hello', methods=['POST'])
+@app.route('/levelSelecter', methods=['POST'])
 def result():
-    #Recieving an input from the web page (should be a first name)
+    #Recieving an input from the web page (should be a difficuly level)
     #.form is the contents from the html code
-    name = request.form['firstName']
-    print("hello", name)
-
-    #This is what appears on the browser
-    return ("hello " + name)
+    level = request.form['level']
+    
+    #This is what appears here
+    print ("You chose " + level)
+    
+    if level == 'hard':
+        return("WOW, good luck")
+    elif level == 'medium':
+        return("Just an average buckaroo I see")
+    elif level == 'easy':
+        return("Pffft, what are you? Weak?")
 
 #If statement is a safety check to make sure flask only runs when the file is run directly and not imported from another file
 if __name__ == '__main__':
 
     #The host='0.0.0.0' is to make every IP address my computer knows about, be able to recieve requests
-    app.run(host='0.0.0.0', port=8080)
+    app.run(host='0.0.0.0', port=8080, debug=True)
