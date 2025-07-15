@@ -1,8 +1,7 @@
 <!--Telling the browser what type of html it is-->
 <!DOCTYPE html>
-<!--Creates the html-->
+<!--Creates the html and header-->
 <html>
-<!--Creates the header-->
 <head>
     <!--Used to make sure special character or accented letters won't appear incorrectly-->
     <meta charset="UTF-8">
@@ -14,10 +13,21 @@
 <!--Closes the header-->
 </head>
 
-<!--Opens body and closes the body and html-->
+<!--Opens body-->
 <body>
 
+    <!--Creates a message with a specific font and clour as a heading-->
     <h1 style="color: khaki; font-family: 'Black Ops One', Arial, sans-serif;">You made it to setup!</h1>
+
+    <!--Creating a link back to the previous page-->
+    <a href="/{{previousPage}}">back</a>
+
+    <form action="/gameplay" method="post">
+
+        <button type="submit">PLAY!!!!</button>
+
+    <!--Closes the form, body and html-->
+    </form>
 
 </body>
 </html>

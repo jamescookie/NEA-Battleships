@@ -4,9 +4,11 @@ from flask import Flask, request, render_template
 #__name__ is a built in python variable of the current program being passed to flask
 app = Flask(__name__)
 
+#From the folder 'routes', the code is importing the file 'route'
 from routes import route
 
-route.fred(app, render_template)
+#In the file 'route', the subroutine 'creatingRoutes' is taking the arguements
+route.creatingRoutes(app, request, render_template)
 
 #If statement is a safety check to make sure flask only runs when the file is run directly and not imported from another file
 if __name__ == '__main__':

@@ -1,0 +1,47 @@
+<!--Telling the browser what type of html it is-->
+<!DOCTYPE html>
+<!--Creates the html and header-->
+<html>
+<head>
+    <!--Used to make sure special character or accented letters won't appear incorrectly-->
+    <meta charset="UTF-8">
+    <!--Makes the name of the web page-->
+    <title>Gameplay</title>
+    <!--So the font I want to use can be accessed by the web browser-->
+    <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&display=swap" rel="stylesheet">
+
+<!--Closes the header-->
+</head>
+
+<!--Opens the body-->
+<body>
+    
+    <!--Creates a button that the user can click that will make the function on javascript run-->
+    <button onclick="openFullscreen()">Go Fullscreen</button>
+
+    <!--Creates a button that the user can click that will make the function on javascript run-->
+    <button onclick="exitFullscreen()">Exit Fullscreen</button>
+
+    <!--Creates spaces to make it easier on the eyes to see what is going on-->
+    <br>
+    <br>
+    
+    <!--A form that makes you go all the way back to the home screen by pressing quit-->
+    <form action="/" method="post">
+
+        <button type="submit">QUIT :(</button>
+
+    </form>
+
+    <br>
+    <br>
+
+    <!--form for submiting future data to the setup-->
+    <h1 style="color:chocolate; font-family: 'Black Ops One', Arial, sans-serif;">This is where you will play!</h1>
+
+    <!--Tells flask to look in the static folder for the file js/battleships.js for the function-->
+    <script src="{{ url_for('static', filename='js/battleships.js') }}"></script>
+
+<!--Some more closing tags-->
+</body>
+</html>
