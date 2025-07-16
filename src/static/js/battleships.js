@@ -21,7 +21,7 @@ $(document).ready(function () {
   .each(function(index, item) {  //For every table inside game-board, this funtion will execute
     let gameBoard = $(item);  //Creating a variable that refers to the table
     const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';  //Creates a constant variable called alphabet, which is the alphabet
-    const boardSize = 10;  //How big the board will be
+    const boardSize = GRID_SIZE;  //How big the board will be
     for (let row = 0; row < boardSize + 2; row++) { //Begins a for loop that starts at 0, increments by 1 each time and goes until board size + 2
       let rowElement = $('<tr/>'); //Creating rows
       for (let col = 0; col < boardSize + 2; col++) { //Same as 2 lines above, but for columns instead
@@ -35,12 +35,27 @@ $(document).ready(function () {
           if (col == 0 || col == boardSize + 1) {
             rowElement.append('<th>'+row+'</th>');   //If it's the first or last column, then label with numbers 
           } else{
-            rowElement.append('<td><button data-grid="'+alphabet[col]+col+'"></button></td>');  //Adding the buttons to everything else
+            rowElement.append('<td><button data-grid="'+alphabet[col-1]+row+'"></button></td>');  //Adding the buttons to everything else
           }       
         }
       }
       gameBoard.append(rowElement); //Adds the row that's just been created
     }
+  });
+
+  $('.game-board').on('click', 'button', function() { //Looks for any button inside game-board and when it's clicked do this function
+    $.ajax({  //A way of sending a request to python
+      url: '/take-turn',  //The path to get to python
+      type: 'POST',
+      contentType: 'application/json',  //json is a convenient way of passing information back and forth
+      dataType: 'json',
+      data: JSON.stringify({  //Making 'turn into json
+        turn: $(this).data('grid')  //'this' is the button the user clicked on and data('grid') is its coordinates
+      }),
+      success: function(response) {
+        console.log('Success:', response);  //deals with the response from python
+      }
+    });
   });
 
 });

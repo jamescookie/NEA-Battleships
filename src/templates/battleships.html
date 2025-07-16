@@ -71,6 +71,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
             crossorigin="anonymous"></script>       <!--Additional helper methods for formatting assisstance-->
+    <script>
+        const GRID_SIZE = Number("{{ gridSize }}");   //Passing the python variable gridSize to JavaScript
+    </script>        
     <!--Tells flask to look in the static folder for the file js/battleships.js for the function-->
     <script src="{{ url_for('static', filename='js/battleships.js') }}"></script>
 

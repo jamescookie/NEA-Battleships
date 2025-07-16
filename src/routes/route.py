@@ -1,3 +1,6 @@
+from gameplay import grid
+from flask import jsonify
+
 #The creatingRoutes subroutine takes the parameters 'app' and 'render_template' because they're only defined in the main program 
 def creatingRoutes(app, request, render_template):
 
@@ -26,4 +29,15 @@ def creatingRoutes(app, request, render_template):
     #Same process but respondes with the gameplay html instead
     @app.route('/gameplay', methods=['POST'])
     def gameplay():
-        return render_template('gameplay.html')
+        return render_template('battleships.html', gridSize = grid.gridSize)
+    
+    @app.route('/take-turn', methods=['POST'])
+    def takeTurn():
+        data = request.get_json()  #Assigning a variable to the information sent from the browser
+        if not data:
+            return jsonify({"error": "No JSON received"}), 400  #Error handling 
+        
+
+        #Button the user has clicked being sent to a subroutine
+        #Information to send back to the browser
+        return jsonify({"result": grid.hitOrMiss(data.get('turn')), "computer-turn": { "position": "A1", "result": True}})
