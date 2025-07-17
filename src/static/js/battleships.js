@@ -43,7 +43,9 @@ $(document).ready(function () {
     }
   });
 
-  $('.game-board').on('click', 'button', function() { //Looks for any button inside game-board and when it's clicked do this function
+  $('.game-board.opponent').on('click', 'button', function() { //Looks for any button inside game-board and when it's clicked do this function
+    let $this = $(this);  //Assigining a variable to the jquery version of the button you clicked on
+    $this.prop("disabled", true); //Disables button after clicking it
     $.ajax({  //A way of sending a request to python
       url: '/take-turn',  //The path to get to python
       type: 'POST',
@@ -51,9 +53,14 @@ $(document).ready(function () {
       dataType: 'json',
       data: JSON.stringify({  //Making 'turn' into json
         id: GAME_ID,  //Passing the gameId back to python
-        turn: $(this).data('grid')  //'this' is the button the user clicked on and data('grid') is its coordinates
+        turn: $this.data('grid')  //'this' is the button the user clicked on and data('grid') is its coordinates
       }),
       success: function(response) {
+        if (response.result == true) {
+          $this.addClass('hit');  //If the click is a hit, then it adds a class so that css can colour it
+        } else {
+          $this.addClass('miss'); //Same but if it's a miss
+        }
         console.log('Success:', response);  //deals with the response from python
       }
     });
