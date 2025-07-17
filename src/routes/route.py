@@ -31,7 +31,7 @@ def creatingRoutes(app, request, render_template):
     @app.route('/gameplay', methods=['POST'])
     def gameplay():
         #Every time the 'PLAY!!!!' button is clicked a new object in the game class is created (with it's own uuid)
-        newGame = game.Game()
+        newGame = game.Game("sea")
         return render_template('battleships.html', gridSize = grid.gridSize, gameId = newGame.id)
     
     @app.route('/take-turn', methods=['POST'])
