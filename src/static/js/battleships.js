@@ -49,7 +49,8 @@ $(document).ready(function () {
       type: 'POST',
       contentType: 'application/json',  //json is a convenient way of passing information back and forth
       dataType: 'json',
-      data: JSON.stringify({  //Making 'turn into json
+      data: JSON.stringify({  //Making 'turn' into json
+        id: GAME_ID,  //Passing the gameId back to python
         turn: $(this).data('grid')  //'this' is the button the user clicked on and data('grid') is its coordinates
       }),
       success: function(response) {

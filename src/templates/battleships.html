@@ -61,7 +61,7 @@
         <div class="row">   <!--Same table but for my ships instead-->
             <h2>My Board</h2>
             <div class="game-board">
-                <table class="table"/>
+                <table class="table"></table>
             </div>            
         </div>
     </div>
@@ -73,6 +73,7 @@
             crossorigin="anonymous"></script>       <!--Additional helper methods for formatting assisstance-->
     <script>
         const GRID_SIZE = Number("{{ gridSize }}");   //Passing the python variable gridSize to JavaScript
+        const GAME_ID = "{{ gameId }}";     //Passing the python varibale gameId to JavaScript
     </script>        
     <!--Tells flask to look in the static folder for the file js/battleships.js for the function-->
     <script src="{{ url_for('static', filename='js/battleships.js') }}"></script>
