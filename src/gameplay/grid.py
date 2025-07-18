@@ -2,20 +2,20 @@
 import random
 
 #Global variables
-gridSize = 3
+gridSize = 10
 empty = "E"
 
 #Subroutine to create the grid and place the ships randomly
 def grid(units):
-    print(units)
+    #print(units)
     newGrid = [['E' for i in range(gridSize)] for i in range(gridSize)]
     for i in range(len(units)):
         placingShips(newGrid, units[i])
-    print(newGrid)
+    #print(newGrid)
     return newGrid
 
 def placingShips(grid, troop):
-    print("HI")
+    #print("HI")
     type = troop[0]
     width = troop[1]
     length = troop[2]
@@ -32,11 +32,7 @@ def placingShips(grid, troop):
                 startingY = yAxis
                 startingX = xAxis
                 locationCheck = canIPlaceAUnitHere(xAxis, yAxis, grid)
-                print("Stuck here")
-                print(grid)
-                #print(yAxis, xAxis)
 
-        print(directionArray, xAxis, yAxis)
         if len(directionArray) == 1:
             index = 0    
         else:    
@@ -66,11 +62,13 @@ def placingShips(grid, troop):
                 check = True
             else: 
                 continue
-                
-    print("found a place: ", startingX, startingY, direction, type) 
-    for i in range (width):
+
+
+    one = 1
+    if width == 1:
         for j in range (length):
             grid[startingY][startingX] = type
+            #print("width: ", width, "length: ", length, "startingX: ", startingX,"startingY: ", startingY, "i: ", i, "j: ", j)
             if direction == "north":
                 startingY += 1
             elif direction == "east":
@@ -79,22 +77,64 @@ def placingShips(grid, troop):
                 startingY -= 1
             elif direction == "west":
                 startingX -= 1
-    print(grid)
+    else:
+        for i in range (width):
+            for j in range(length-1):
+                grid[startingY][startingX] = type
+                if direction == "north":
+                    startingY += one
+                elif direction == "east":
+                    startingX += one
+                elif direction == "south":
+                    startingY -= one
+                elif direction == "west":
+                    startingX -= one
+            grid[startingY][startingX] = type
+            if i != width-1:
+                if direction == "north":
+                    startingX += one
+                elif direction == "east":
+                    startingY += one
+                elif direction == "south":
+                    startingX -= one
+                elif direction == "west":
+                    startingY -= one          
+                one = -one
 
 
 def compassDirections (direction, value, width, length, x, y, grid):
-    for i in range (width):
+    if width == 1:
         for j in range(length-1):
+                #print("width: ", width, "length: ", length, "x: ", x,"y: ", y, "i: ", i, "j: ", j)
             if direction == "north" or direction == "south":
                 y += value
             else:
                 x += value
             if canIPlaceAUnitHere(x, y, grid) == False:
-                return False
+                return False          
+    else:
+        for i in range (width):
+            for j in range(length-1):
+                #print("width: ", width, "length: ", length, "x: ", x,"y: ", y, "i: ", i, "j: ", j)
+                if direction == "north" or direction == "south":
+                    y += value
+                else:
+                    x += value
+                if canIPlaceAUnitHere(x, y, grid) == False:
+                    return False
+            if i != width-1:
+                if direction == "north" or direction == "south":
+                    x += value
+                else:
+                    y += value
+                if canIPlaceAUnitHere(x, y, grid) == False:
+                    return False
+                value = -value
     return True
 
 
 def canIPlaceAUnitHere(x, y, grid):
+    #print(gridSize, x, y)
     if x < gridSize and x >= 0 and y < gridSize and y >= 0 and grid[y][x] == empty:
         return True
     else:
