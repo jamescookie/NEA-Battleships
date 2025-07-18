@@ -7,7 +7,7 @@ workflows:
             - org-global
           filters:
             branches:
-              only: master
+              only: main
 jobs:
   build:
     docker:
