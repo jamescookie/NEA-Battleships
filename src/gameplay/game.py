@@ -1,7 +1,9 @@
+#Importing all the files from the folders
 import uuid
 from gameplay import grid
 from gameplay import units
 
+#Creating the array for every game to be played
 games = []
 
 #Creating a class called Game

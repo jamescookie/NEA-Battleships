@@ -1,3 +1,4 @@
+#Importing files from folders and importing the flask library
 from flask import jsonify
 from gameplay import game
 from gameplay import grid
