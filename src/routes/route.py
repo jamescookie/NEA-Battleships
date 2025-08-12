@@ -51,6 +51,8 @@ def creatingRoutes(app, request, render_template):
 
         #The information above is being sent to the subroutine called 'hitOrMiss' to work out if the shot was successful
         hitOrMiss = game.hitOrMiss(buttonClicked, gameId)
-        
-        #Information to send back to the browser
-        return jsonify({"result": hitOrMiss, "computer-turn": { "position": "A1", "result": True}})
+        if hitOrMiss[0] == 'sunk':
+            return jsonify({"result": hitOrMiss[0], "coordinates": hitOrMiss[1],  "computer-turn": { "position": "A1", "result": True}})
+        else:
+            #Information to send back to the browser
+            return jsonify({"result": hitOrMiss[0], "computer-turn": { "position": "A1", "result": True}})

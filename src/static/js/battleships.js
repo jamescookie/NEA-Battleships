@@ -56,12 +56,17 @@ $(document).ready(function () {
         turn: $this.data('grid')  //'this' is the button the user clicked on and data('grid') is its coordinates
       }),
       success: function(response) {
-        if (response.result == true) {
+        console.log('Success:', response);  //deals with the response from python
+        if (response.result === true) {
           $this.addClass('hit');  //If the click is a hit, then it adds a class so that css can colour it
-        } else {
+        } if (response.result === 'sunk') {
+          for (let i = 0; i < response.coordinates.length; i++) {
+            console.log('doing:', response.coordinates[i]);
+            $('.opponent *[data-grid="'+response.coordinates[i]+'"]').removeClass('hit').addClass('sunk');
+          }
+        } if (response.result === false) {
           $this.addClass('miss'); //Same but if it's a miss
         }
-        console.log('Success:', response);  //deals with the response from python
       }
     });
   });

@@ -8,15 +8,15 @@ empty = "E"
 
 #Subroutine to create the grid and place the ships randomly
 def grid(units):
-    newGrid = [['E' for i in range(gridSize)] for i in range(gridSize)]
+    newGrid = [['E' for i in range(gridSize)] for j in range(gridSize)]
     for i in range(len(units)):
-        placingShips(newGrid, units[i])
-    findingShips(newGrid)
+        checkingShips(newGrid, units[i])
+    findingShips(newGrid, True, empty)
     return newGrid
 
 
 #This entire subroutine is to check and place ships in the grid created
-def placingShips(grid, troop):
+def checkingShips(grid, troop):
     #These are collecting the data of the ships in the units folder
     type = troop[0]
     width = troop[1]
@@ -131,16 +131,19 @@ def canIPlaceAUnitHere(y, x, grid):
 
 
 #Locating the position of the ships using a search algorithm
-def findingShips(grid):
+def findingShips(grid, placing, slot):
     spotsArray = []
-    yAxis = 0
-    xAxis = 0
     for yAxis in range(gridSize):
         for xAxis in range(gridSize):
-            if grid[yAxis][xAxis] != empty:
-                #Once the location of the ship is found, label the position with coordinates (A1, C5, E2)
-                spotsArray.append(str(chr(ord('A') + xAxis)) + str(yAxis + 1))
+            if placing == True:
+                if grid[yAxis][xAxis] != slot:
+                    #Once the location of the ship is found, label the position with coordinates (A1, C5, E2)
+                    spotsArray.append(str(chr(ord('A') + xAxis)) + str(yAxis + 1))   
+            else:
+                if grid[yAxis][xAxis] == slot:
+                    spotsArray.append(str(chr(ord('A') + xAxis)) + str(yAxis + 1))         
     return spotsArray
+
 
 
 #Function for printing all the letters on the grid in python
