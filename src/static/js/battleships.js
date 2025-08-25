@@ -64,6 +64,12 @@ $(document).ready(function () {
             console.log('doing:', response.coordinates[i]);
             $('.opponent *[data-grid="'+response.coordinates[i]+'"]').removeClass('hit').addClass('sunk');
           }
+          if (response.win === true) {
+            $("#win-message").show();
+            $('.opponent button').each(function(index, button) { 
+              $(button).prop("disabled", true); //Disables all buttons
+            });
+          }
         } if (response.result === false) {
           $this.addClass('miss'); //Same but if it's a miss
         }

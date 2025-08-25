@@ -2,6 +2,7 @@
 from flask import jsonify
 from gameplay import game
 from gameplay import grid
+from gameplay import units
 
 #The creatingRoutes subroutine takes the parameters 'app' and 'render_template' because they're only defined in the main program 
 def creatingRoutes(app, request, render_template):
@@ -42,17 +43,21 @@ def creatingRoutes(app, request, render_template):
             return jsonify({"error": "No JSON received"}), 400  #Error handling 
         
 
-        
         #Button the user has clicked
         buttonClicked = data.get('turn')
 
         #Id of the game being played
         gameId =  data.get('id')
 
+        foundGame = game.findGame(gameId)
+
         #The information above is being sent to the subroutine called 'hitOrMiss' to work out if the shot was successful
-        hitOrMiss = game.hitOrMiss(buttonClicked, gameId)
+        hitOrMiss = game.hitOrMiss(buttonClicked, foundGame)
         if hitOrMiss[0] == 'sunk':
-            return jsonify({"result": hitOrMiss[0], "coordinates": hitOrMiss[1],  "computer-turn": { "position": "A1", "result": True}})
+            if hitOrMiss[2] == len(foundGame.units):
+                return jsonify({"result": hitOrMiss[0], "coordinates": hitOrMiss[1], "win": True,  "computer-turn": { "position": "A1", "result": True}})
+            else:
+                return jsonify({"result": hitOrMiss[0], "coordinates": hitOrMiss[1], "win": False,  "computer-turn": { "position": "A1", "result": True}})
         else:
             #Information to send back to the browser
             return jsonify({"result": hitOrMiss[0], "computer-turn": { "position": "A1", "result": True}})
