@@ -11,7 +11,8 @@ def grid(units):
     newGrid = [['E' for i in range(gridSize)] for j in range(gridSize)]
     for i in range(len(units)):
         checkingShips(newGrid, units[i])
-    findingShips(newGrid, True, empty)
+    #Prints the grid and location of all the ships for ease of debugging
+    printingGrid(newGrid)
     return newGrid
 
 
@@ -131,28 +132,64 @@ def canIPlaceAUnitHere(y, x, grid):
 
 
 #Locating the position of the ships using a search algorithm
-def findingShips(grid, placing, slot):
+def findingShips(grid, allShips, slot):
     spotsArray = []
     for yAxis in range(gridSize):
         for xAxis in range(gridSize):
-            if placing == True:
+            #This makes it so that either the spots array is collecting every coordinate of the ships or just a specific ship
+            if allShips == True:
                 if grid[yAxis][xAxis] != slot:
-                    #Once the location of the ship is found, label the position with coordinates (A1, C5, E2)
+                    #Once the location of A ship is found, label the position with coordinates (A1, C5, E2)
                     spotsArray.append(str(chr(ord('A') + xAxis)) + str(yAxis + 1))   
             else:
                 if grid[yAxis][xAxis] == slot:
+                    #Once the location of THE ship is found, label the position with coordinates (A1, C5, E2)
                     spotsArray.append(str(chr(ord('A') + xAxis)) + str(yAxis + 1))         
     return spotsArray
 
 
+#Changes (0, 2) or (8, 5), for example, into (A, 3) or (I, 6) respectively
+def coordsToGridReference(xAxis,yAxis):
+    x = str(chr(ord('A') + xAxis))
+    y = str(yAxis + 1)
+    #Return a string of just A3 or I6
+    return str(x + y)
+
+
+#Changes (A, 3) or (I, 6), for example, into (0, 2) or (8, 5) respectively
+def gridReference(grid, reference, new):
+    x = int(ord(reference[0])) - 65
+    y = int(reference[1:]) - 1
+    #Just returns what the message in the coordinates is
+    if new == None:
+        return grid[y][x]
+    #Changes the coordinates of the grid into the new message
+    grid[y][x] = new
+    
 
 #Function for printing all the letters on the grid in python
 #It's not used in the main program but is useful to have when debugging
 def printingGrid(grid):
+    #This is just to space out the grid printed, so it's not too confusing
+    print("--------------------------------------------------------------------------------------------")
+    #Creates the letters at the top of the board
+    for i in range(len(grid[0])):
+        print(chr(ord('A') + int(i)), end=" ")
+    #Prints an extra line
+    print("\n")
+    #For every row in the grid (10) and every spot in the rows (10)
     for row in grid:
         for spot in row:
+            #If the spot is empty, then it prints an "E" with a space to seperate the E's
             if spot is empty:
                 print(empty, end=" ")
             else:
+                #Prints the unit in the spot with a space
                 print(f"{spot:1}", end=" ")
         print()
+    #Used to create a new line to print on
+    print()
+    #Creates the letters at the bottom of the board
+    for i in range(len(grid[0])):
+        print(chr(ord('A') + int(i)), end=" ")
+    print("\n--------------------------------------------------------------------------------------------")

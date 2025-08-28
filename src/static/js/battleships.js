@@ -13,6 +13,30 @@ function exitFullscreen() {
   }
 }
 
+function handleResponse(response, board, msg) {
+  console.log('Success:', response);  //deals with the response from python
+  if (response.result === true) {
+    //If the click is a hit, then it adds a class so that css can colour it
+    board.find($('*[data-grid="'+response.target+'"]')).addClass('hit');
+  } 
+  if (response.result === false) {
+    //Same but if it's a miss
+    board.find($('*[data-grid="'+response.target+'"]')).addClass('miss');
+  }
+  if (response.result === 'sunk') {
+    // For every part of the specific ship that has been sunk, will turn black
+    for (let i = 0; i < response.coordinates.length; i++) {
+      console.log('doing:', response.coordinates[i]);
+      // Removing the hit class (to remove the red) and replace it with the sunk class (black)
+      board.find($('*[data-grid="'+response.coordinates[i]+'"]')).removeClass('hit').addClass('sunk');
+    }
+    if (response.win === true) {
+      // Once someone has won, the hidden messages will show, depending on who won
+      msg.show();
+      $('.game-board').find($('button')).prop("disabled", true); //Disables all of the opponents boards buttons
+    }
+  } 
+}
 
 //Where you would put javascript functions to change the page
 $(document).ready(function () {
@@ -56,22 +80,11 @@ $(document).ready(function () {
         turn: $this.data('grid')  //'this' is the button the user clicked on and data('grid') is its coordinates
       }),
       success: function(response) {
-        console.log('Success:', response);  //deals with the response from python
-        if (response.result === true) {
-          $this.addClass('hit');  //If the click is a hit, then it adds a class so that css can colour it
-        } if (response.result === 'sunk') {
-          for (let i = 0; i < response.coordinates.length; i++) {
-            console.log('doing:', response.coordinates[i]);
-            $('.opponent *[data-grid="'+response.coordinates[i]+'"]').removeClass('hit').addClass('sunk');
-          }
-          if (response.win === true) {
-            $("#win-message").show();
-            $('.opponent button').each(function(index, button) { 
-              $(button).prop("disabled", true); //Disables all buttons
-            });
-          }
-        } if (response.result === false) {
-          $this.addClass('miss'); //Same but if it's a miss
+        // Tells the function 'handleResponse' that the user has made a turn on the opponent's board and a win message might need to be shown
+        handleResponse(response.userTurn, $('.opponent'), $(".win-message-user"));
+        if (!response.userTurn.win) {
+          // This does the same thing, but will not run if the user has won
+          handleResponse(response.computerTurn, $('.user'), $(".win-message-opponent"));
         }
       }
     });
