@@ -13,10 +13,15 @@
     
     <!-- Colours the button after clicked -->
     <style>     
+        /* Makes the square clicked red if the response returns with hit */
         .game-board .hit {
-            background-color: red;  
-            
+            background-color: red;
         }
+        /* Makes the square clicked black if the response returns with sunk */
+        .game-board .sunk {
+            background-color: black;
+        }
+        /* Makes the square clicked green if the response returns with miss */
         .game-board .miss {
             background-color: green;
         }
@@ -57,7 +62,9 @@
 
         </form>
         <h1 style="color:chocolate; font-family: 'Black Ops One', Arial, sans-serif;">This is where you will play!</h1>
-
+        <!-- These messages will only appear once the user or robot has one -->
+        <h2 class="win-message-user" style="display: none; color: lime; font-family: 'Black Ops One', Arial, sans-serif;">You Win</h2>
+        <h2 class="win-message-opponent" style="display: none; color: lime; font-family: 'Black Ops One', Arial, sans-serif;">It's statistically impossible to find this message unless you tried to fail, good job!</h2>
 
         <div class="row">   <!--Making a bootstrap row for laying out-->
             <h2>Opponent's Board</h2>
@@ -68,7 +75,7 @@
         </div>
         <div class="row">   <!--Same table but for my ships instead-->
             <h2>My Board</h2>
-            <div class="game-board">
+            <div class="game-board user">
                 <table class="table"></table>
             </div>            
         </div>
