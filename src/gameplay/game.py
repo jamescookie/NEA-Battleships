@@ -8,13 +8,14 @@ games = []
 
 #Creating a class called Game
 class Game:
-    def __init__ (self, layout):
+    def __init__ (self, layout, difficulty):
         #Making the game attributes
         #The id and grids are generated whilst they're being set as an attribute
         self.id = uuid.uuid4()
         self.units = units.layout[layout]
         self.robotGrid = grid.grid(self.units)
         self.userGrid = grid.grid(self.units)
+        self.difficulty = difficulty
         #Setting the amount of ships sunken by the user and robot to 0
         self.userShipsSunk = 0
         self.robotShipsSunk = 0

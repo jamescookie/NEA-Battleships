@@ -2,7 +2,7 @@
 from flask import jsonify
 from gameplay import game
 from gameplay import grid
-from robots import easyRobot
+import importlib
 
 #The creatingRoutes subroutine takes the parameters 'app' and 'render_template' because they're only defined in the main program 
 def creatingRoutes(app, request, render_template):
@@ -16,7 +16,7 @@ def creatingRoutes(app, request, render_template):
     #The path and the method on the program and the form have to match up so they can talk to each other
     @app.route('/single-player', methods=['GET'])
     def singlePlayer():
-        return render_template('single-player.html')
+        return render_template('single-player.html', environment = request.args.get('environment'))
 
     #Same process but respondes with the multiplayer html instead
     @app.route('/multi-player', methods=['GET'])
@@ -27,13 +27,13 @@ def creatingRoutes(app, request, render_template):
     @app.route('/setup', methods=['POST'])
     def setup():
         #Respondes to the browser with the setup html page and the parameter previousPage, which came from the hidden input from the other pages
-        return render_template('setup.html', previousPage = request.form['previous-page'])
+        return render_template('setup.html', previousPage = request.form['previous-page'], difficulty = request.form['robot'], environment = request.form['environment'])
 
     #Same process but respondes with the gameplay html instead
     @app.route('/gameplay', methods=['POST'])
     def gameplay():
-        #Every time the 'PLAY!!!!' button is clicked a new object in the game class is created (with it's own uuid)
-        newGame = game.Game("sea")
+        #Every time the 'PLAY!!!!' button is clicked a new object in the game class is created (with it's own uuid), it also passes the difficulty of the robot and the map to use
+        newGame = game.Game(request.form['environment'], request.form['difficulty'])
         return render_template('battleships.html', gridSize = grid.gridSize, gameId = newGame.id)
     
     #Everytime a button has been clicked by the user, this subroutine will run
@@ -73,8 +73,10 @@ def creatingRoutes(app, request, render_template):
             return robotWinning(foundGame, gameId, hitOrMiss, buttonClicked)
 
 def robotWinning(foundGame, gameId, hitOrMiss, buttonClicked):
+    #Importing the correct robot difficulty using dynamic import and only importing the robot needed
+    robotType = importlib.import_module("." + str(foundGame.difficulty) + "Robot", 'robots')
     #Fires a random shot at the users board
-    robotCoordinates = easyRobot.robotShooting(foundGame.userGrid)
+    robotCoordinates = robotType.robotShooting(foundGame.userGrid)
     #Decides whether the shot sunk, hit or missed a ship
     robotHitOrMiss = game.hitOrMiss(robotCoordinates, foundGame, "user")
     if robotHitOrMiss[0] == 'sunk':

@@ -16,24 +16,54 @@
 <!--Opens the body-->
 <body>
     
-    <!--form for submiting future data to the setup-->
-    <form action="/setup" method="post">
-        
-        <!--Tells my program which page I came from-->
-        <input type="hidden" name="previous-page" value="single-player"/>
-        
-        <!--Submit button to take you to the next page (the setup html)-->
-        <button type="submit">Setup</button>
-    
-    <!--Closing tag-->
-    </form>
-
     <!--form for going back to the home screen, which is why the method for the '/' route required both post and get-->
     <form action="/" method="post">
 
         <button type="submit">Home</button>
 
     <!--Closing tags-->
+    </form>
+
+    <!--form for submiting future data to the setup-->
+    <form action="/setup" method="post">
+        
+        <!--Tells my program which page I came from-->
+        <input type="hidden" name="previous-page" value="single-player"/>
+        <input type="hidden" name="robot" value="easy"/>
+        <input type="hidden" name="environment" value="{{environment}}"/>
+        
+        <!--Submit button to take you to the next page (the setup html)-->
+        <button type="submit">Easy Robot</button>
+    
+    <!--Closing tag-->
+    </form>
+
+    <!--form for submiting future data to the setup-->
+    <form action="/setup" method="post">
+        
+        <!--Tells my program which page I came from-->
+        <input type="hidden" name="previous-page" value="single-player"/>
+        <input type="hidden" name="robot" value="easy"/>
+        <input type="hidden" name="environment" value="{{environment}}"/>
+        
+        <!--Submit button to take you to the next page (the setup html)-->
+        <button type="submit">Medium Robot</button>
+    
+    <!--Closing tag-->
+    </form>
+
+    <!--form for submiting future data to the setup-->
+    <form action="/setup" method="post">
+        
+        <!--Tells my program which page I came from-->
+        <input type="hidden" name="previous-page" value="single-player"/>
+        <input type="hidden" name="robot" value="easy"/>
+        <input type="hidden" name="environment" value="{{environment}}"/>
+        
+        <!--Submit button to take you to the next page (the setup html)-->
+        <button type="submit">Hard Robot</button>
+    
+    <!--Closing tag-->
     </form>
     
 </body>

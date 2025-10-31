@@ -1,6 +1,5 @@
 #Imports
 import random
-
 #Global variables
 gridSize = 10
 empty = "E"

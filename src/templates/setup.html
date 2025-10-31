@@ -22,8 +22,11 @@
     <!--Creating a link back to the previous page-->
     <a href="/{{previousPage}}">back</a>
 
+    <!--Passes the information on which map and what difficulty of robot you will be playing against-->
     <form action="/gameplay" method="post">
         
+        <input type="hidden" name="difficulty" value="{{difficulty}}"/>
+        <input type="hidden" name="environment" value="{{environment}}"/>
         <button type="submit">PLAY!!!!</button>
 
     <!--Closes the form, body and html-->

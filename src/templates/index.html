@@ -18,26 +18,16 @@
     <!--Creates, colours,  styles and closes the title-->
     <h1 style="color: chartreuse; font-family: 'Black Ops One', Arial, sans-serif;">Battleships, yay</h1>
 
-    <!--a is an anchor, which is a link and href is the location to which the link will take you-->
-    <!--this anchor will take you to the single player page-->
-    <a href="/single-player">
-
-        <!--this is what the link will say-->
-        Single Player
-    
-    <!--Closes anchor-->
-    </a>
-
-    <!--br is for break, whcih creates a new line for the multiplayer link to go on, I made two to make the spacing nicer-->
-    <br/>
-    <br/>
-
-    <!--same anchor but for multiplayer instead-->
-    <a href="/multi-player">
-
-        Multi Player
-    
-    </a>
+    <!--Creates a multiple choice drop down tab to select which map you want, and can be found in the code with environment-->
+    <form>
+        <input type="submit" formaction="/multi-player" value="Multi Player" disabled="disabled"/>
+        <input type="submit" formaction="/single-player" value="Single Player"/>
+        <select name="environment">
+            <option value="sea">Sea</option>
+            <option value="sea">Forest</option>
+            <option value="sea">Desert</option>
+        </select>
+    </form>
 
 <!--Closing tags-->
 </body>
