@@ -12,29 +12,35 @@ def creatingRoutes(app, request, render_template):
     def home():
         return render_template('index.html')
 
-    #When you click the link, this method runs, which respondes to the browser with the single player html
+    #When you click the link, this method runs, which responds to the browser with the single player html
     #The path and the method on the program and the form have to match up so they can talk to each other
     @app.route('/single-player', methods=['GET'])
     def singlePlayer():
         return render_template('single-player.html', environment = request.args.get('environment'))
 
-    #Same process but respondes with the multiplayer html instead
+    #Same process but responds with the multiplayer html instead
     @app.route('/multi-player', methods=['GET'])
     def multiPlayer():
         return render_template('multi-player.html')
     
-    #Same process but respondes with the setup html instead
+    #Same process but responds with the setup html instead
     @app.route('/setup', methods=['POST'])
     def setup():
-        #Respondes to the browser with the setup html page and the parameter previousPage, which came from the hidden input from the other pages
-        return render_template('setup.html', previousPage = request.form['previous-page'], difficulty = request.form['robot'], environment = request.form['environment'])
+        newGame = game.Game(request.form['environment'], request.form['robot']) #todo probably don't need to set up the "user" board anymore...
+        #Responds to the browser with the setup html page and the parameters:
+        #  previousPage, which came from the hidden input from the other pages
+        #  gameId, which has just been created
+        #  units, which come from the game (these need to be convented into json)
+        #  gridSize, which comes from the grid
+        return render_template('setup.html', previousPage = request.form['previous-page'], gameId = newGame.id, units = newGame.units, gridSize = grid.gridSize)
 
-    #Same process but respondes with the gameplay html instead
+    #Same process but responds with the gameplay html instead
     @app.route('/gameplay', methods=['POST'])
     def gameplay():
+        # todo we need to receive the layout of the unit here and update the game with that info...
+
         #Every time the 'PLAY!!!!' button is clicked a new object in the game class is created (with it's own uuid), it also passes the difficulty of the robot and the map to use
-        newGame = game.Game(request.form['environment'], request.form['difficulty'])
-        return render_template('battleships.html', gridSize = grid.gridSize, gameId = newGame.id)
+        return render_template('battleships.html', gridSize = grid.gridSize, gameId = request.form['game-id'])
     
     #Everytime a button has been clicked by the user, this subroutine will run
     @app.route('/take-turn', methods=['POST'])

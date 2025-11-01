@@ -9,6 +9,19 @@
     <title>Setup</title>
     <!--So the font I want to use can be accessed by the web browser-->
     <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css"> <!--Icons that can be used (like settings cog)-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+          integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">  <!--Styles that make formatting easier and checks that it's legitamite-->
+    <style>
+        /* Hides the radio button */
+        [type='radio'] {
+            display: none; 
+        }
+        /* Show which unit is selected by highlighting the background */
+        #units input:checked + label {
+            background-color: yellow;
+        }
+    </style>    <!--Custom styles for my page-->
 
 <!--Closes the header-->
 </head>
@@ -25,12 +38,44 @@
     <!--Passes the information on which map and what difficulty of robot you will be playing against-->
     <form action="/gameplay" method="post">
         
-        <input type="hidden" name="difficulty" value="{{difficulty}}"/>
-        <input type="hidden" name="environment" value="{{environment}}"/>
+        <input type="hidden" name="game-id" value="{{ gameId }}"/>
         <button type="submit">PLAY!!!!</button>
 
     <!--Closes the form, body and html-->
     </form>
+    <!-- Seperates the columns of the page to layout the different sections -->
+    <div class="container">
+        <div class="row">
+            <!-- To hold the units that you'll be placing -->
+            <div class="col-3">
+                 <h2>Units</h2>
+                 <div id="units">
+                 </div>
+            </div>
+            <!-- Makes the centre 8 columns of the page dedicated to spacing out the grid to fit in the space provided -->
+            <div class="col-8">
+                <div class="game-board setup">
+                    <table class="table"></table>
+                </div>            
+            </div>
+            <div class="col-1">
+                <!-- controls -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const GRID_SIZE = Number("{{ gridSize }}");   //Passing the python variable gridSize to JavaScript
+        // const GAME_ID = "{{ gameId }}";     //Passing the python varibale gameId to JavaScript
+        const UNITS = JSON.parse(`{{ units|tojson|safe }}`);  // Passing the python variable units to JavaScript but using "safe" to prevent HTML escaping and parsing/tojson to remove editor errors
+    </script>       
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>       <!--Makes javascript easier (helper methods)-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+            crossorigin="anonymous"></script>       <!--Additional helper methods for formatting assisstance--> 
+    <!--Tells flask to look in the static folder for the file js/battleships.js for the function-->
+    <script src="{{ url_for('static', filename='js/battleships.js') }}"></script>
 
 </body>
 </html>

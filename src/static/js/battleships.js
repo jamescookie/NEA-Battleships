@@ -90,4 +90,14 @@ $(document).ready(function () {
     });
   });
 
+  // Add the units to the setup page
+  if (typeof UNITS != "undefined") {
+    let $units = $('#units')
+    for (let index = 0; index < UNITS.length; index++) {
+      // Each unit is a radio button so that you can select it, it displays the name, width and length of the unit
+      $units.append('<div class="row"><input type="radio" id="'+UNITS[index][0]+'" name="unit" value="'+UNITS[index][0]+'" />'+
+        '<label for="'+UNITS[index][0]+'">'+UNITS[index][0]+' ('+UNITS[index][1]+','+UNITS[index][2]+')</label></div>');
+    }
+  }
+
 });
