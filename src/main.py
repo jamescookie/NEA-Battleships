@@ -15,3 +15,7 @@ if __name__ == '__main__':
 
     #The host='0.0.0.0' is to make every IP address my computer knows about, be able to recieve requests
     app.run(host='0.0.0.0', port=8080, debug=True)
+
+
+# Don't commit at school
+# I can checkout a previous fix, but must revert back to main branch (bottom left button, git symbol) before closing vscode

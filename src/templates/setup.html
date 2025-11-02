@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css"> <!--Icons that can be used (like settings cog)-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
           integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">  <!--Styles that make formatting easier and checks that it's legitamite-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-ui@1.14.1/themes/base/autocomplete.min.css">   <!-- The library to enable things to be dragged -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/battleships.css') }}" />    <!-- So that the grid styles will have the same format -->
     <style>
         /* Hides the radio button */
         [type='radio'] {
@@ -20,6 +22,14 @@
         /* Show which unit is selected by highlighting the background */
         #units input:checked + label {
             background-color: yellow;
+        }
+        /* Showing where a unit is by colouring the background */
+        .game-board .unit {
+            background-color: gray;
+        }
+        /* Showing when a unit is being moved by colouring the background */
+        .game-board .unit.moving {
+            background-color: blue;
         }
     </style>    <!--Custom styles for my page-->
 
@@ -35,14 +45,6 @@
     <!--Creating a link back to the previous page-->
     <a href="/{{previousPage}}">back</a>
 
-    <!--Passes the information on which map and what difficulty of robot you will be playing against-->
-    <form action="/gameplay" method="post">
-        
-        <input type="hidden" name="game-id" value="{{ gameId }}"/>
-        <button type="submit">PLAY!!!!</button>
-
-    <!--Closes the form, body and html-->
-    </form>
     <!-- Seperates the columns of the page to layout the different sections -->
     <div class="container">
         <div class="row">
@@ -58,8 +60,13 @@
                     <table class="table"></table>
                 </div>            
             </div>
+            <!-- Last column has controls -->
             <div class="col-1">
-                <!-- controls -->
+                <!--Passes the information on which map and what difficulty of robot you will be playing against-->
+                <form action="/gameplay" method="post">
+                    <input type="hidden" name="game-id" value="{{ gameId }}"/>
+                    <button type="submit" disabled="disabled">PLAY!!!!</button>     <!-- Disabled until all ships are placed (not finished yet) -->
+                </form>
             </div>
         </div>
     </div>
@@ -71,6 +78,7 @@
     </script>       
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"
             integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>       <!--Makes javascript easier (helper methods)-->
+    <script src="https://cdn.jsdelivr.net/npm/jquery-ui@1.14.1/dist/jquery-ui.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
             crossorigin="anonymous"></script>       <!--Additional helper methods for formatting assisstance--> 
