@@ -26,10 +26,13 @@
             background-color: green;
         }
     </style>    <!--Custom styles for my page-->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/battleships.css') }}" />    <!-- So that the grid styles will have the same format -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css"> <!--Icons that can be used (like settings cog)-->
+    <!-- So that the grid styles will have the same format -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/battlematrix.css') }}" />    
+    <!--Icons that can be used (like settings cog)-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css"> 
+    <!--Styles that make formatting easier and checks that it's legitamite-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
-          integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">  <!--Styles that make formatting easier and checks that it's legitamite-->
+          integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">  
 
 
 <!--Closes the header-->
@@ -59,13 +62,18 @@
         <!--A form that makes you go all the way back to the home screen by pressing quit-->
         <form action="/" method="post">
 
+            <input type="hidden" name="gameId" value="{{gameId}}"/>
             <button type="submit">QUIT :(</button>
 
         </form>
-        <h1 style="color:chocolate; font-family: 'Black Ops One', Arial, sans-serif;">This is where you will play!</h1>
-        <!-- These messages will only appear once the user or robot has one -->
-        <h2 class="win-message-user" style="display: none; color: lime; font-family: 'Black Ops One', Arial, sans-serif;">You Win</h2>
-        <h2 class="win-message-opponent" style="display: none; color: lime; font-family: 'Black Ops One', Arial, sans-serif;">It's statistically impossible to find this message unless you tried to fail, good job!</h2>
+        <h1 style="color:chocolate; 
+            font-family: 'Black Ops One', Arial, sans-serif;">This is where you will play!</h1>
+        <!-- These messages will only appear once the user or robot has won -->
+        <h2 class="win-message-user" style="display: none; color: lime; 
+            font-family: 'Black Ops One', Arial, sans-serif;">You Win</h2>
+        <h2 class="win-message-opponent" style="display: none; color: lime; 
+            font-family: 'Black Ops One', Arial, sans-serif;">
+            It's statistically impossible to find this message unless you tried to fail, good job!</h2>
 
         <div class="row">   <!--Making a bootstrap row for laying out-->
             <div class="col-12">    <!-- To make the formatting correct for the grid -->
@@ -86,8 +94,9 @@
         </div>
     </div>
 
+    <!--Makes javascript easier (helper methods)-->
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"
-            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>       <!--Makes javascript easier (helper methods)-->
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>       
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
             crossorigin="anonymous"></script>       <!--Additional helper methods for formatting assisstance-->
@@ -95,8 +104,8 @@
         const GRID_SIZE = Number("{{ gridSize }}");   //Passing the python variable gridSize to JavaScript
         const GAME_ID = "{{ gameId }}";     //Passing the python varibale gameId to JavaScript
     </script>        
-    <!--Tells flask to look in the static folder for the file js/battleships.js for the function-->
-    <script src="{{ url_for('static', filename='js/battleships.js') }}"></script>
+    <!--Tells flask to look in the static folder for the file js/battlematrix.js for the function-->
+    <script src="{{ url_for('static', filename='js/battlematrix.js') }}"></script>
 
 <!--Some more closing tags-->
 </body>

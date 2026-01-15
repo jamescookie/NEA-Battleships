@@ -9,11 +9,15 @@
     <title>Setup</title>
     <!--So the font I want to use can be accessed by the web browser-->
     <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css"> <!--Icons that can be used (like settings cog)-->
+    <!--Icons that can be used (like settings cog)-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css"> 
+    <!--Styles that make formatting easier and checks that it's legitamite-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
-          integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">  <!--Styles that make formatting easier and checks that it's legitamite-->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-ui@1.14.1/themes/base/autocomplete.min.css">   <!-- The library to enable things to be dragged -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/battleships.css') }}" />    <!-- So that the grid styles will have the same format -->
+          integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">  
+    <!-- The library to enable things to be dragged -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-ui@1.14.1/themes/base/autocomplete.min.css">   
+    <!-- So that the grid styles will have the same format -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/battlematrix.css') }}" />    
     <style>
         /* Hides the radio button */
         [type='radio'] {
@@ -43,7 +47,14 @@
     <h1 style="color: khaki; font-family: 'Black Ops One', Arial, sans-serif;">You made it to setup!</h1>
 
     <!--Creating a link back to the previous page-->
-    <a href="/{{previousPage}}">back</a>
+    <form action="/{{previousPage}}" method="post">
+
+        <input type="hidden" name="gameId" value="{{ gameId }}"/>
+
+        <button type="submit">Back</button>
+
+    <!--Closing tags-->
+    </form>
 
     <!-- Seperates the columns of the page to layout the different sections -->
     <div class="container">
@@ -65,7 +76,9 @@
                 <!--Passes the information on which map and what difficulty of robot you will be playing against-->
                 <form action="/gameplay" method="post">
                     <input type="hidden" name="game-id" value="{{ gameId }}"/>
-                    <button type="submit" disabled="disabled">PLAY!!!!</button>     <!-- Disabled until all ships are placed (not finished yet) -->
+                    <!-- Disabled until all ships are placed (not finished yet) -->
+                    <!-- disabled="disabled" Commented out, until completed (For debugging)-->
+                    <button type="submit">PLAY!!!!</button>     
                 </form>
             </div>
         </div>
@@ -73,17 +86,22 @@
 
     <script>
         const GRID_SIZE = Number("{{ gridSize }}");   //Passing the python variable gridSize to JavaScript
-        // const GAME_ID = "{{ gameId }}";     //Passing the python varibale gameId to JavaScript
-        const UNITS = JSON.parse(`{{ units|tojson|safe }}`);  // Passing the python variable units to JavaScript but using "safe" to prevent HTML escaping and parsing/tojson to remove editor errors
-    </script>       
+        const GAME_ID = "{{ gameId }}";     //Passing the python varibale gameId to JavaScript
+        
+        //Passing the python variable units to JavaScript but using "safe" to prevent HTML escaping and 
+        //parsing/tojson to remove editor errors
+        const UNITS = JSON.parse(`{{ units|tojson|safe }}`);  
+    </script>   
+    <!--Makes javascript easier (helper methods)-->    
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"
-            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>       <!--Makes javascript easier (helper methods)-->
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>       
     <script src="https://cdn.jsdelivr.net/npm/jquery-ui@1.14.1/dist/jquery-ui.min.js"></script>
+    <!--Additional helper methods for formatting assisstance--> 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
-            crossorigin="anonymous"></script>       <!--Additional helper methods for formatting assisstance--> 
-    <!--Tells flask to look in the static folder for the file js/battleships.js for the function-->
-    <script src="{{ url_for('static', filename='js/battleships.js') }}"></script>
+            crossorigin="anonymous"></script>       
+    <!--Tells flask to look in the static folder for the file js/battlematrix.js for the function-->
+    <script src="{{ url_for('static', filename='js/battlematrix.js') }}"></script>
 
 </body>
 </html>

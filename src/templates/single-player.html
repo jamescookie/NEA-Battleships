@@ -19,6 +19,7 @@
     <!--form for going back to the home screen, which is why the method for the '/' route required both post and get-->
     <form action="/" method="post">
 
+        <input type="hidden" name="gameId" value="{{gameId}}"/>
         <button type="submit">Home</button>
 
     <!--Closing tags-->
@@ -30,8 +31,10 @@
         <!--Tells my program which page I came from-->
         <input type="hidden" name="previous-page" value="single-player"/>
         <input type="hidden" name="robot" value="easy"/>
-        <input type="hidden" name="environment" value="{{environment}}"/>
-        
+        <input type="hidden" name="gameId" value="{{gameId}}"/>
+        <input type="hidden" name="units" value="{{units}}"/>
+        <input type="hidden" name="gridSize" value="{{gridSize}}"/>
+
         <!--Submit button to take you to the next page (the setup html)-->
         <button type="submit">Easy Robot</button>
     
@@ -44,7 +47,9 @@
         <!--Tells my program which page I came from-->
         <input type="hidden" name="previous-page" value="single-player"/>
         <input type="hidden" name="robot" value="easy"/>
-        <input type="hidden" name="environment" value="{{environment}}"/>
+        <input type="hidden" name="gameId" value="{{gameId}}"/>
+        <input type="hidden" name="units" value="{{units}}"/>
+        <input type="hidden" name="gridSize" value="{{gridSize}}"/>
         
         <!--Submit button to take you to the next page (the setup html)-->
         <button type="submit">Medium Robot</button>
@@ -58,7 +63,9 @@
         <!--Tells my program which page I came from-->
         <input type="hidden" name="previous-page" value="single-player"/>
         <input type="hidden" name="robot" value="easy"/>
-        <input type="hidden" name="environment" value="{{environment}}"/>
+        <input type="hidden" name="gameId" value="{{gameId}}"/>
+        <input type="hidden" name="units" value="{{units}}"/>
+        <input type="hidden" name="gridSize" value="{{gridSize}}"/>
         
         <!--Submit button to take you to the next page (the setup html)-->
         <button type="submit">Hard Robot</button>

@@ -9,20 +9,21 @@ empty = "E"
 def grid(units):
     newGrid = [['E' for i in range(gridSize)] for j in range(gridSize)]
     for i in range(len(units)):
-        checkingShips(newGrid, units[i])
+        checkingTroops(newGrid, units[i])
     #Prints the grid and location of all the ships for ease of debugging
     printingGrid(newGrid)
     return newGrid
 
 
 #This entire subroutine is to check and place ships in the grid created
-def checkingShips(grid, troop):
+def checkingTroops(grid, troop):
     #These are collecting the data of the ships in the units folder
     type = troop[0]
     width = troop[1]
     length = troop[2]
     check = False
-    #This is to be used by the program to determine which direction the ship will be placed in, but also reset for every new ship
+    #This is to be used by the program to determine which direction the ship will be placed in, 
+    #but also reset for every new ship
     directionArray = [["Y", -1],
                       ["X", 1],
                       ["Y", 1],
@@ -36,13 +37,13 @@ def checkingShips(grid, troop):
                             ["X", 1],
                             ["Y", 1],
                             ["X", -1]]
-            #While loop to keep creating new starting coordinates if the ones created are inaccurate (on top of another ship)
+            #While loop to keep creating new starting coordinates if the ones created are inaccurate 
+            #(on top of another ship)
             while locationCheck == False:
                 #Creating the coordinates for the ship
                 yAxis = random.randint(0,gridSize-1)
                 xAxis = random.randint(0,gridSize-1)
                 #Logging the location of the original coordinates because the yAxis and xAsis are going to get changed
-                
                 coordinates = [yAxis, xAxis]
                 #locationCheck will come back true or false
                 locationCheck = canIPlaceAUnitHere(yAxis, xAxis, grid)
@@ -67,7 +68,7 @@ def checkingShips(grid, troop):
             #This will keep running for the entire length of the ship minus 1
             for j in range (length-1):
                 #This makes the next coordinates of the ship to be in the direction selected
-                checkingCoordinates = actualPlacingShips(checkingCoordinates, axis, type, grid, value, 0, 1, False)
+                checkingCoordinates = placingTroops(checkingCoordinates, axis, type, grid, value, 0, 1, False)
                 if canIPlaceAUnitHere(checkingCoordinates[0], checkingCoordinates[1], grid) == False:
                     break
 
@@ -75,15 +76,17 @@ def checkingShips(grid, troop):
         else:
             for i in range (width):
                 for j in range(length-1):
-                    checkingCoordinates = actualPlacingShips(checkingCoordinates, axis, type, grid, checkingValue, 0, 1, False)
+                    checkingCoordinates = placingTroops(checkingCoordinates, axis, type, grid,
+                                                        checkingValue, 0, 1, False)
                     if canIPlaceAUnitHere(checkingCoordinates[0], checkingCoordinates[1], grid) == False:
                         break
                 if canIPlaceAUnitHere(checkingCoordinates[0], checkingCoordinates[1], grid) == False:
                     break
 
-                #This will make the ship turn direction after it completes the first run through and go back the other way along an axis directly next to the first one
+                #This will make the ship turn direction after it completes the first run through 
+                #and go back the other way along an axis directly next to the first one
                 if i != width-1:
-                    checkingCoordinates = actualPlacingShips(checkingCoordinates, axis, type, grid, checkingValue, 1, 0, False)
+                    checkingCoordinates = placingTroops(checkingCoordinates, axis, type, grid, checkingValue, 1, 0, False)
                     if canIPlaceAUnitHere(checkingCoordinates[0], checkingCoordinates[1], grid) == False:
                         break
                     #This makes the ship go the opposite way that it just went
@@ -99,17 +102,17 @@ def checkingShips(grid, troop):
     #This section is the exact same as the previous but without checking whether it can fit because it already knows it can
     if width == 1:
         for j in range (length-1):
-            coordinates = actualPlacingShips(coordinates, axis, type, grid, value, 0, 1, True)
+            coordinates = placingTroops(coordinates, axis, type, grid, value, 0, 1, True)
     else:
         for i in range (width):
             for j in range(length-1):
-                coordinates = actualPlacingShips(coordinates, axis, type, grid, value, 0, 1, True)
+                coordinates = placingTroops(coordinates, axis, type, grid, value, 0, 1, True)
             if i != width-1:
-                coordinates = actualPlacingShips(coordinates, axis, type, grid, value, 1, 0, True)
+                coordinates = placingTroops(coordinates, axis, type, grid, value, 1, 0, True)
                 value = -value
 
 
-def actualPlacingShips(coordinates, axis, type, grid, value, num1, num2, placing):
+def placingTroops(coordinates, axis, type, grid, value, num1, num2, placing):
     if axis == "Y":
         #Increments the coordinates of the ship by one in either the Y axis or X axis
         coordinates[num1] += value
@@ -131,12 +134,13 @@ def canIPlaceAUnitHere(y, x, grid):
 
 
 #Locating the position of the ships using a search algorithm
-def findingShips(grid, allShips, slot):
+def findingTroops(grid, allTroops, slot):
     spotsArray = []
     for yAxis in range(gridSize):
         for xAxis in range(gridSize):
-            #This makes it so that either the spots array is collecting every coordinate of the ships or just a specific ship
-            if allShips == True:
+            #This makes it so that either the spots array is collecting every coordinate of the ships 
+            #or just a specific ship
+            if allTroops == True:
                 if grid[yAxis][xAxis] != slot:
                     #Once the location of A ship is found, label the position with coordinates (A1, C5, E2)
                     spotsArray.append(str(chr(ord('A') + xAxis)) + str(yAxis + 1))   
@@ -156,7 +160,7 @@ def coordsToGridReference(xAxis,yAxis):
 
 
 #Changes (A, 3) or (I, 6), for example, into (0, 2) or (8, 5) respectively
-def gridReference(grid, reference, new):
+def gridReferenceToCoords(grid, reference, new):
     x = int(ord(reference[0])) - 65
     y = int(reference[1:]) - 1
     #Just returns what the message in the coordinates is

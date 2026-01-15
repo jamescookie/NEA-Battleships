@@ -2,21 +2,43 @@
 from flask import jsonify
 from gameplay import game
 from gameplay import grid
-import importlib
 
-#The creatingRoutes subroutine takes the parameters 'app' and 'render_template' because they're only defined in the main program 
+#The creatingRoutes subroutine takes the parameters 'app' and 'render_template' 
+#because they're only defined in the main program 
 def creatingRoutes(app, request, render_template):
 
     #When you type '/' into the browser, this program sends the browser which page to show
     @app.route('/', methods=['GET', 'POST'])
     def home():
+
+        #This checks to see if this page was reached from going back a page or not
+        #In this case the 'not' would be from typing the correct URL into the browser
+        if request.method == "POST":
+            #Whenever going back to the home page, any game that was created, would be removed
+            game.removeGame(request.form['gameId'])
+
         return render_template('index.html')
 
     #When you click the link, this method runs, which responds to the browser with the single player html
     #The path and the method on the program and the form have to match up so they can talk to each other
-    @app.route('/single-player', methods=['GET'])
+    @app.route('/single-player', methods=['GET', 'POST'])
     def singlePlayer():
-        return render_template('single-player.html', environment = request.args.get('environment'))
+
+        #Same as before, but will instead create a new game when travelling forward through the pages
+        if request.method == "GET":
+            newGame = game.Game(request.args.get('environment'))
+        #And collecting information from the already created game if not
+        else:
+            newGame = game.findGame(request.form['gameId'])
+
+
+        #Responds to the browser with the single-player html page and the parameters:
+        # gameId, which has just been created
+        # units, which come from the game (these need to be convented into json)
+        # gridSize, which comes from the grid
+
+        return render_template('single-player.html', gameId = newGame.id, 
+                               units = newGame.units, gridSize = grid.gridSize)
 
     #Same process but responds with the multiplayer html instead
     @app.route('/multi-player', methods=['GET'])
@@ -26,21 +48,32 @@ def creatingRoutes(app, request, render_template):
     #Same process but responds with the setup html instead
     @app.route('/setup', methods=['POST'])
     def setup():
-        newGame = game.Game(request.form['environment'], request.form['robot']) #todo probably don't need to set up the "user" board anymore...
-        #Responds to the browser with the setup html page and the parameters:
-        #  previousPage, which came from the hidden input from the other pages
-        #  gameId, which has just been created
-        #  units, which come from the game (these need to be convented into json)
-        #  gridSize, which comes from the grid
-        return render_template('setup.html', previousPage = request.form['previous-page'], gameId = newGame.id, units = newGame.units, gridSize = grid.gridSize)
+        
+        #Gets the Id of the game being played
+        gameId = request.form['gameId']
+
+        #Sets foundGame to the uuid found in the games array
+        foundGame = game.findGame(gameId)
+
+        #Uses the settingAttr subroutine to change the difficulty of the robot you will be playing,
+        #from None to whatever button you clicked on
+        game.settingAttr(foundGame, 'difficulty', request.form['robot'])
+
+        # previousPage, which came from the hidden input from the other pages
+        #This sends the same parameters as before, but also previousPage for single player or multiplayer,
+        #depending on where the user came from
+        return render_template('setup.html', previousPage = request.form['previous-page'], 
+                               gameId = foundGame.id, units = foundGame.units, 
+                               gridSize = grid.gridSize)
 
     #Same process but responds with the gameplay html instead
     @app.route('/gameplay', methods=['POST'])
     def gameplay():
         # todo we need to receive the layout of the unit here and update the game with that info...
 
-        #Every time the 'PLAY!!!!' button is clicked a new object in the game class is created (with it's own uuid), it also passes the difficulty of the robot and the map to use
-        return render_template('battleships.html', gridSize = grid.gridSize, gameId = request.form['game-id'])
+        #Every time the 'PLAY!!!!' button is clicked a new object in the game class is created (with it's own uuid), 
+        #it also passes the difficulty of the robot and the map to use
+        return render_template('battlematrix.html', gridSize = grid.gridSize, gameId = request.form['game-id'])
     
     #Everytime a button has been clicked by the user, this subroutine will run
     @app.route('/take-turn', methods=['POST'])
@@ -51,7 +84,6 @@ def creatingRoutes(app, request, render_template):
             #Error handling (Very unlikely to ever happen)
             return jsonify({"error": "No JSON received"}), 400  
         
-
         #Button the user has clicked
         buttonClicked = data.get('turn')
 
@@ -61,39 +93,12 @@ def creatingRoutes(app, request, render_template):
         #Sets foundGame to the uuid found in the games array
         foundGame = game.findGame(gameId)
 
-        #Sending the hitOrMiss function what button the user clicked, the uuid of the game being played and that it's the robot's board that's been hit
+        #Sending the hitOrMiss function what button the user clicked, the uuid of the game being played and 
+        #that it's the robot's board that's been hit
         hitOrMiss = game.hitOrMiss(buttonClicked, foundGame, "robot")
-        #If the shot fired has sunk the ship
-        if hitOrMiss[0] == 'sunk':
-            #If the number fo sunken ships is equal to the number of ships on the board
-            if hitOrMiss[2] == len(foundGame.units):
-                #Removes the game from the games array because it's not being used anymore
-                game.removeGame(gameId)
-                #Tells the JavaScript that the user has won
-                return jsonify({"userTurn": {"target": buttonClicked, "result": hitOrMiss[0], "coordinates": hitOrMiss[1], "win": True}})
-            else:
-                #This is the return to JavaScript whether the robot has won, hit or missed
-                return robotWinning(foundGame, gameId, hitOrMiss, buttonClicked)
-        else:
-            #To cover all bases, for example, the user misses, but the robot has sunk and potentially won
-            return robotWinning(foundGame, gameId, hitOrMiss, buttonClicked)
 
-def robotWinning(foundGame, gameId, hitOrMiss, buttonClicked):
-    #Importing the correct robot difficulty using dynamic import and only importing the robot needed
-    robotType = importlib.import_module("." + str(foundGame.difficulty) + "Robot", 'robots')
-    #Fires a random shot at the users board
-    robotCoordinates = robotType.robotShooting(foundGame.userGrid)
-    #Decides whether the shot sunk, hit or missed a ship
-    robotHitOrMiss = game.hitOrMiss(robotCoordinates, foundGame, "user")
-    if robotHitOrMiss[0] == 'sunk':
-        if robotHitOrMiss[2] == len(foundGame.units):
-            game.removeGame(gameId)
-            #Tells the JavaScript that the user hasn't won, but the robot has
-            return jsonify({"userTurn": {"target": buttonClicked, "result": hitOrMiss[0], "coordinates": hitOrMiss[1], "win": False},
-                      "computerTurn": {"target": robotCoordinates, "result": robotHitOrMiss[0], "coordinates": robotHitOrMiss[1], "win": True}})
-    #Tells the JavaScript that no ships were sunk, and either were hit or missed
-    return jsonify({"userTurn": {"target": buttonClicked, "result": hitOrMiss[0], "coordinates": hitOrMiss[1], "win": False},
-                  "computerTurn": {"target": robotCoordinates, "result": robotHitOrMiss[0], "coordinates": robotHitOrMiss[1], "win": False}})
+        #This is the subroutine for when the users shot has been registered
+        #and to determine whether they have won or not, or whether the robot needs to shoot as well
+        #Needs to return the value, otherwise the 'turn' won't end
+        return game.sinking(hitOrMiss, foundGame, gameId, buttonClicked)
 
-#The 'return jsonify' codes are seperated into the users turn and computers turn
-#Each one has the target coordinates, whether the shot is successful, all the coordinates of that ship that has already been sunk, whether that is the winning shot
