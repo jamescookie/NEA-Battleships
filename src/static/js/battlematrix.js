@@ -208,6 +208,11 @@ $(document).ready(function () {
       }
       unit.radioButton.prop('disabled', true); //disable the unit so that it cannot be selected again
       unit.radioButton.prop('checked', false); //unselect the unit
+
+      //If all the units are disabled (on the board)
+      if ($('#units input[name="unit"]').length === $('#units input[name="unit"]:disabled').length) {  
+        $('#play').prop('disabled', false); //Then renable
+      }
     }
   });
 
@@ -254,4 +259,61 @@ $(document).ready(function () {
       }
     });
   });
+
+  // Only allowed to submit the form if there are no overlapping units and board is valid
+  $('#play').click(function (e) {
+    e.preventDefault(); // prevent default form submission initially
+
+    let hasOverlap = false;
+    $('.game-board.setup .unit').each(function() {
+      if ($(this).data('units-array').length > 1) {    //If there are multiple units here
+        hasOverlap = true;
+        return false; // break out of the each loop
+      }
+    });
+
+    if (hasOverlap) {
+      alert('Cannot start game: Units are overlapping! Please rearrange your units so they do not overlap.');
+      return;
+    }
+
+    // Build the board representation
+    const board = [];
+    for (let row = 1; row <= GRID_SIZE; row++) {
+      const rowArray = [];
+      for (let col = 0; col < GRID_SIZE; col++) {
+        const coordinate = alphabet[col] + row;
+        const $button = $('.game-board.setup').find('*[data-grid="'+coordinate+'"]');
+        const units = $button.data('units-array') || [];
+
+        if (units.length === 0) {
+          rowArray.push('E'); // Empty
+        } else {
+          rowArray.push(units[0].name); // Unit name
+        }
+      }
+      board.push(rowArray);
+    }
+
+    // Make call to validate the board
+    $.ajax({
+      url: '/validate-board',
+      type: 'POST',
+      contentType: 'application/json',
+      dataType: 'json',
+      data: JSON.stringify({
+        gameId: GAME_ID,
+        board: board
+      }),
+      success: function(response) {
+        if (response.valid) {
+          // Board is valid, turn off validation and submit the form
+          $('form').off('submit').submit();
+        } else {
+          // Board is invalid, show error message
+          alert('Invalid board configuration: ' + (response.message || 'Please check your unit placement.'));
+        }
+      }
+    });
+  })
 });

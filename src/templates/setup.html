@@ -76,9 +76,8 @@
                 <!--Passes the information on which map and what difficulty of robot you will be playing against-->
                 <form action="/gameplay" method="post">
                     <input type="hidden" name="game-id" value="{{ gameId }}"/>
-                    <!-- Disabled until all ships are placed (not finished yet) -->
-                    <!-- disabled="disabled" Commented out, until completed (For debugging)-->
-                    <button type="submit">PLAY!!!!</button>     
+                    <!-- Disabled until all ships are placed -->
+                    <button id="play" type="submit" disabled="disabled">PLAY!!!!</button>     
                 </form>
             </div>
         </div>

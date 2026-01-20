@@ -66,11 +66,30 @@ def creatingRoutes(app, request, render_template):
                                gameId = foundGame.id, units = foundGame.units, 
                                gridSize = grid.gridSize)
 
+    #This subroutine is to check whether all the units are within the grid
+    @app.route('/validate-board', methods=['POST'])
+    def validateBoard():
+        data = request.get_json()
+        gameId = data.get('gameId')
+        board = data.get('board')
+        #Sets foundGame to the uuid found in the games array
+        foundGame = game.findGame(gameId)
+        
+        numOfUnits = grid.numberOfUnits(foundGame.units)
+        numberOfUnitsOnBoard = grid.findingTroops(board, False, "E")
+        #If how many empty spaces + how many troops in the game add to make the entire grid
+        if len(numberOfUnitsOnBoard) + numOfUnits[0] == numOfUnits[1] * numOfUnits[1]:
+            #Sets the userGrid in the game to be the board the user made, only if it's valid
+            game.settingAttr(foundGame, 'userGrid', board)
+            grid.printingGrid(board, 'user')
+            return jsonify({"valid" : True, "message" : "board is vaid"})
+        else:
+            return jsonify({"valid" : False, "message" : "Some units are off the board"})
+        
+
     #Same process but responds with the gameplay html instead
     @app.route('/gameplay', methods=['POST'])
     def gameplay():
-        # todo we need to receive the layout of the unit here and update the game with that info...
-
         #Every time the 'PLAY!!!!' button is clicked a new object in the game class is created (with it's own uuid), 
         #it also passes the difficulty of the robot and the map to use
         return render_template('battlematrix.html', gridSize = grid.gridSize, gameId = request.form['game-id'])

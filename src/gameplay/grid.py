@@ -6,12 +6,12 @@ empty = "E"
 
 
 #Subroutine to create the grid and place the ships randomly
-def grid(units):
+def grid(units, player):
     newGrid = [['E' for i in range(gridSize)] for j in range(gridSize)]
     for i in range(len(units)):
         checkingTroops(newGrid, units[i])
     #Prints the grid and location of all the ships for ease of debugging
-    printingGrid(newGrid)
+    printingGrid(newGrid, player)
     return newGrid
 
 
@@ -151,6 +151,15 @@ def findingTroops(grid, allTroops, slot):
     return spotsArray
 
 
+#To find how many parts of troops there is
+#(Basically how many squares the user needs to click on, in order to win)
+def numberOfUnits(unit):
+    parts = 0
+    for i in range (len(unit)):
+        parts += unit[i][1] * unit[i][2]
+    return parts, gridSize
+
+
 #Changes (0, 2) or (8, 5), for example, into (A, 3) or (I, 6) respectively
 def coordsToGridReference(xAxis,yAxis):
     x = str(chr(ord('A') + xAxis))
@@ -172,9 +181,9 @@ def gridReferenceToCoords(grid, reference, new):
 
 #Function for printing all the letters on the grid in python
 #It's not used in the main program but is useful to have when debugging
-def printingGrid(grid):
+def printingGrid(grid, player):
     #This is just to space out the grid printed, so it's not too confusing
-    print("--------------------------------------------------------------------------------------------")
+    print(f"----------------------------------------------{player}----------------------------------------------")
     #Creates the letters at the top of the board
     for i in range(len(grid[0])):
         print(chr(ord('A') + int(i)), end=" ")
@@ -195,4 +204,4 @@ def printingGrid(grid):
     #Creates the letters at the bottom of the board
     for i in range(len(grid[0])):
         print(chr(ord('A') + int(i)), end=" ")
-    print("\n--------------------------------------------------------------------------------------------")
+    print(f"\n----------------------------------------------{player}----------------------------------------------")
