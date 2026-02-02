@@ -1,7 +1,7 @@
 //Creates a constant global variable called alphabet, which is the alphabet
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';  
 //Creates a constant global varibale that designs what it looks like when you start moving something
-const movingWrapper = '<div class="p-2 bg-light border rounded shadow-sm"></div>';  
+const movingWrapper = '<div class="p-2 bg-light border rounded shadow-sm" style="display: none"></div>';  
 
 //This subroutine is for opening full screen
 function openFullscreen() {
@@ -44,7 +44,7 @@ function handleResponse(response, board, msg) {
 
 //Where you would put javascript functions to change the page
 $(document).ready(function () {
-
+  $('.game-board').css('--grid-size', GRID_SIZE);
   $('.game-board table') //Finds all game boards and targets the table inside it
   .each(function(index, item) {  //For every table inside game-board, this funtion will execute
     let gameBoard = $(item);  //Creating a variable that refers to the table
@@ -152,6 +152,12 @@ $(document).ready(function () {
 
   $('.game-board.setup td').droppable({   //defines where you can drop (only on the grid)
     accept: ".unit",  //allows you to drop any of the units but nothing else 
+    over: function(event, ui){  //When a draggable enters a table cell, add a visual clue to the button.
+      $(this).find('button').addClass('hover-shadow');
+    },
+    out: function(event, ui){ //Remove the visual clue when the draggable leaves
+      $(this).find('button').removeClass('hover-shadow');
+    },
     drop: function(event, ui) {   //method that is called when the unit is dropped
       const unit = ui.helper.data('unit');  //getting the reference of the unit
       const $place = $(this);   //where you dropped
@@ -159,7 +165,9 @@ $(document).ready(function () {
       const length = unit.length;   //Creates the constant length as the units specific length
       const board = $('.game-board.setup');   //Creates the constant board as the setup game board
       //Creates the constant currentSquare as the button you've dropped on
-      const currentSquare = $place.find('button');    
+      const currentSquare = $place.find('button'); 
+      //When the draggable is dropped, the hover shadow is removed   
+      currentSquare.removeClass('hover-shadow');
       //Makes col the number associated to the letter that the unit was dropped on 
       //(A becomes 1, D becomes 4. Because of the +1)
       let col = alphabet.indexOf(currentSquare.data('grid').substring(0, 1)) + 1;   

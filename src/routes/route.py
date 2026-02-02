@@ -90,9 +90,25 @@ def creatingRoutes(app, request, render_template):
     #Same process but responds with the gameplay html instead
     @app.route('/gameplay', methods=['POST'])
     def gameplay():
-        #Every time the 'PLAY!!!!' button is clicked a new object in the game class is created (with it's own uuid), 
-        #it also passes the difficulty of the robot and the map to use
-        return render_template('battlematrix.html', gridSize = grid.gridSize, gameId = request.form['game-id'])
+
+        #Gets the Id of the game being played
+        gameId = request.form['game-id']
+
+        #Sets foundGame to the uuid found in the games array
+        foundGame = game.findGame(gameId)
+
+        #Checks to see if the random button was clicked
+        if request.form['random'] == "random":
+
+            #Uses the settingAttr subroutine to change the userGrid to random
+            game.settingAttr(foundGame, 'userGrid', grid.grid(foundGame.units, 'user'))
+
+            return render_template('battlematrix.html', gridSize = grid.gridSize, gameId = gameId)
+
+        else:
+            #Every time the 'PLAY!!!!' button is clicked a new object in the game class is created
+            #(with it's own uuid), it also passes the difficulty of the robot and the map to use
+            return render_template('battlematrix.html', gridSize = grid.gridSize, gameId = gameId)
     
     #Everytime a button has been clicked by the user, this subroutine will run
     @app.route('/take-turn', methods=['POST'])

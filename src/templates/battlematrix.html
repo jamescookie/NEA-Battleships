@@ -3,13 +3,11 @@
 <!--Creates the html and header-->
 <html>
 <head>
-    <!--Used to make sure special character or accented letters won't appear incorrectly-->
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">        <!--Makes it mobile friendly-->
+    <!-- Common head tags -->
+    {% include 'partials/head-assets.html' %}
+
     <!--Makes the name of the web page-->
     <title>Gameplay</title>
-    <!--So the font I want to use can be accessed by the web browser-->
-    <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&display=swap" rel="stylesheet">
     
     <!-- Colours the button after clicked -->
     <style>     
@@ -25,16 +23,7 @@
         .game-board .miss {
             background-color: green;
         }
-    </style>    <!--Custom styles for my page-->
-    <!-- So that the grid styles will have the same format -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/battlematrix.css') }}" />    
-    <!--Icons that can be used (like settings cog)-->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css"> 
-    <!--Styles that make formatting easier and checks that it's legitamite-->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
-          integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">  
-
-
+    </style>
 <!--Closes the header-->
 </head>
 
@@ -44,15 +33,11 @@
     <div class="container"> <!--How the styles start working-->
         <!--Creates a button that the user can click that will make the function on javascript run-->
         <button onclick="openFullscreen()"> <!--Is to make the maximise icon-->
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrows-fullscreen" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M5.828 10.172a.5.5 0 0 0-.707 0l-4.096 4.096V11.5a.5.5 0 0 0-1 0v3.975a.5.5 0 0 0 .5.5H4.5a.5.5 0 0 0 0-1H1.732l4.096-4.096a.5.5 0 0 0 0-.707m4.344 0a.5.5 0 0 1 .707 0l4.096 4.096V11.5a.5.5 0 1 1 1 0v3.975a.5.5 0 0 1-.5.5H11.5a.5.5 0 0 1 0-1h2.768l-4.096-4.096a.5.5 0 0 1 0-.707m0-4.344a.5.5 0 0 0 .707 0l4.096-4.096V4.5a.5.5 0 1 0 1 0V.525a.5.5 0 0 0-.5-.5H11.5a.5.5 0 0 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 0 .707m-4.344 0a.5.5 0 0 1-.707 0L1.025 1.732V4.5a.5.5 0 0 1-1 0V.525a.5.5 0 0 1 .5-.5H4.5a.5.5 0 0 1 0 1H1.732l4.096 4.096a.5.5 0 0 1 0 .707"/>
-            </svg>
+            <i class="bi bi-arrows-fullscreen"></i>
         </button>
         <!--Creates a button that the user can click that will make the function on javascript run-->
         <button onclick="exitFullscreen()"> <!--Is to make the minimise icon-->
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-fullscreen-exit" viewBox="0 0 16 16">
-                <path d="M5.5 0a.5.5 0 0 1 .5.5v4A1.5 1.5 0 0 1 4.5 6h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5m5 0a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 10 4.5v-4a.5.5 0 0 1 .5-.5M0 10.5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 6 11.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5m10 1a1.5 1.5 0 0 1 1.5-1.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0z"/>
-            </svg>
+            <i class="bi bi-fullscreen-exit"></i>
         </button>
 
         <!--Creates spaces to make it easier on the eyes to see what is going on-->
@@ -66,46 +51,42 @@
             <button type="submit">QUIT :(</button>
 
         </form>
-        <h1 style="color:chocolate; 
-            font-family: 'Black Ops One', Arial, sans-serif;">This is where you will play!</h1>
+        <h1 style="color:chocolate;">This is where you will play!</h1>
         <!-- These messages will only appear once the user or robot has won -->
-        <h2 class="win-message-user" style="display: none; color: lime; 
-            font-family: 'Black Ops One', Arial, sans-serif;">You Win</h2>
-        <h2 class="win-message-opponent" style="display: none; color: lime; 
-            font-family: 'Black Ops One', Arial, sans-serif;">
+        <h2 class="win-message-user" style="display: none; color: lime;">You Win</h2>
+        <h2 class="win-message-opponent" style="display: none; color: lime;">
             It's statistically impossible to find this message unless you tried to fail, good job!</h2>
 
         <div class="row">   <!--Making a bootstrap row for laying out-->
-            <div class="col-12">    <!-- To make the formatting correct for the grid -->
+            <div class="col-3"></div>
+            <div class="col-6">    <!-- To make the formatting correct for the grid -->
                 <h2>Opponent's Board</h2>
                 <div class="game-board opponent">    <!--So the javascript find this table-->
                     <table class="table">   <!--Making a bootstrap table that will hold the board-->
                     </table>
                 </div>
             </div>
+            <div class="col-3"></div>
         </div>
         <div class="row">   <!--Same table but for my ships instead-->
-            <div class="col-12">    <!-- To make the formatting correct for the grid -->
+            <div class="col-3"></div>
+            <div class="col-6">    <!-- To make the formatting correct for the grid -->
                 <h2>My Board</h2>
                 <div class="game-board user">
                     <table class="table"></table>
                 </div>            
             </div>
+            <div class="col-3"></div>
         </div>
     </div>
 
-    <!--Makes javascript easier (helper methods)-->
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"
-            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>       
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
-            crossorigin="anonymous"></script>       <!--Additional helper methods for formatting assisstance-->
     <script>
         const GRID_SIZE = Number("{{ gridSize }}");   //Passing the python variable gridSize to JavaScript
         const GAME_ID = "{{ gameId }}";     //Passing the python varibale gameId to JavaScript
-    </script>        
-    <!--Tells flask to look in the static folder for the file js/battlematrix.js for the function-->
-    <script src="{{ url_for('static', filename='js/battlematrix.js') }}"></script>
+    </script>   
+
+    <!-- Common scripts -->
+    {% include 'partials/scripts.html' %}
 
 <!--Some more closing tags-->
 </body>

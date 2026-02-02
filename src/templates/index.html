@@ -4,19 +4,18 @@
 <html>
 <!--Creates the header-->
 <head>
-    <!--Used to make sure special character or accented letters won't appear incorrectly-->
-    <meta charset="UTF-8">
+    <!-- Common head tags -->
+    {% include 'partials/head-assets.html' %}
+    
     <!--Makes the name of the web page-->
     <title>Battle Matrix Home Screen</title>
-    <!--So the font I want to use can be accessed by the web browser-->
-    <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&display=swap" rel="stylesheet">
 
 <!--Closes the header-->
 </head>
 <!--Opens the body and makes it a colour-->
 <body style="background-color: cornflowerblue;">
     <!--Creates, colours,  styles and closes the title-->
-    <h1 style="color: chartreuse; font-family: 'Black Ops One', Arial, sans-serif;">Welcome to Battle Matrix</h1>
+    <h1 style="color: chartreuse;">Welcome to Battle Matrix</h1>
 
     <!--Creates a multiple choice drop down tab to select which map you want
     and can be found in the code with environment-->

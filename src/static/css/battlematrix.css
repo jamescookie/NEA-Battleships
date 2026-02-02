@@ -1,15 +1,25 @@
+html body {
+    font-family: 'Black Ops One', Arial, sans-serif;
+}
+.game-board {
+    aspect-ratio: 1 / 1; /* Keeps the board square */
+}
 .game-board table {     /* Stops the grid from shrinking and expanding as you resize the window */
-    width: inherit;     /* so that the square always look the same size */
+    width: 100%;
+    height: 100%;
 }
 .game-board button {    /* Sets the width and height of the button to the size of it's container */
     width: 100%;   
     height: 100%;
 }
+.game-board .hover-shadow {     /* Show when something is being dragged over the board */
+    background-color: darkgrey;
+}
 .game-board td,         /* Table cells */
 .game-board th {        /* Specifically a header (the A to J and 1 to 10) */
     padding: 0;     /* Prevents the buttons from looking smaller than the cells */
-    height: 2rem;   /* How tall the cells will be */
-    width: 2rem;    /* How wide the cells will be */
+    width: calc(100% / (var(--grid-size) + 2));     /* How tall the cells will be (+2 for header rows/columns) */
+    height: calc(100% / (var(--grid-size) + 2));    /* How wide the cells will be (+2 for header rows/columns) */
     vertical-align: middle;     /* To make all the letters and numbers aligned vertically */
     text-align: center;         /* To make all the letters and numbers aligned horizontally */
     /* These two make everything middle-middle */
