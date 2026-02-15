@@ -24,7 +24,7 @@
         }
         /* Showing when a unit is being moved by colouring the background */
         .game-board .unit.moving {
-            background-color: blue;
+            opacity: 50%;
         }
     </style>    <!--Custom styles for my page-->
 
@@ -66,7 +66,7 @@
             <!-- Last column has controls -->
             <div class="col-3">
                 <!--Passes the information on which map and what difficulty of robot you will be playing against-->
-                <form action="/gameplay" method="post">
+                <form id="play-form" action="/gameplay" method="post">
                     <input type="hidden" name="game-id" value="{{ gameId }}"/>
                     <input type="hidden" name="random" value="notRandom"/>
                     <!-- Disabled until all ships are placed -->
@@ -74,7 +74,7 @@
                 </form>
 
                 <!--This will do the exact same thing as the play button, but will make the user grid random-->
-                <form action="/gameplay" method="post">
+                <form id="randomize-form" action="/gameplay" method="post">
                     <input type="hidden" name="game-id" value="{{ gameId }}"/>
                     <input type="hidden" name="random" value="random"/>
                     <button id="randomizer" type="submit">Random</button>

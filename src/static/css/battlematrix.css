@@ -24,3 +24,35 @@ html body {
     text-align: center;         /* To make all the letters and numbers aligned horizontally */
     /* These two make everything middle-middle */
 }
+.unit-image {
+    display: block;
+    margin: 0 auto;
+    width: calc(var(--unit-length) * (100% / (var(--grid-size) + 2)));
+    height: auto;
+}
+.unit-drag-image {
+    width: calc(var(--unit-length) * var(--cell-size));
+    height: auto;
+}
+#units label {
+    display: block;
+    padding: 10px;
+    cursor: pointer;
+}
+#units label span {
+    display: block;
+    text-align: center;
+}
+.game-board.setup button {
+    position: relative;
+    overflow: visible;
+}
+.placed-unit-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(var(--unit-length) * 100%);
+    height: calc(var(--unit-width) * 100%);
+    pointer-events: none;
+    z-index: 1;
+}

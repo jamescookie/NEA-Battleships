@@ -2,10 +2,10 @@
 layout = {
     "sea" : 
         #["Type of unit", width, length]
-        [["carrier", 2,5],
-        ["submarine", 1, 2],
-        ["cruiser", 1, 3],
-        ["battleship", 1, 4],
+        [["carrier", 2, 5],
         ["longship", 1, 6],
-        ["destroyer", 1, 3]]
+        ["battleship", 1, 4],
+        ["cruiser", 1, 3],
+        ["destroyer", 1, 3],
+        ["submarine", 1, 2]]
 }

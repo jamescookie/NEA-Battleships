@@ -1,7 +1,18 @@
 //Creates a constant global variable called alphabet, which is the alphabet
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';  
-//Creates a constant global varibale that designs what it looks like when you start moving something
-const movingWrapper = '<div class="p-2 bg-light border rounded shadow-sm" style="display: none"></div>';  
+
+//Helper function to create a drag helper for a unit
+function createUnitDragHelper(unit) {
+  if (!unit) return false; // Abort drag if no unit
+  const boardWidth = $('.game-board.setup').width();
+  const cellSize = boardWidth / (GRID_SIZE + 2);
+  const move = $('<div class="opacity-25 z-3"></div>');
+  move.append('<img src="/static/img/'+unit.name.toLowerCase()+'.png" alt="'+unit.name+'" class="unit-drag-image" ' +
+    'style="--unit-length: '+unit.length+'; --cell-size: '+cellSize+'px;" />');
+  //creates a reference to the unit that was grabbed (so it can be disabled when successfully dropped)
+  move.data('unit', unit);
+  return move;
+}
 
 //This subroutine is for opening full screen
 function openFullscreen() {
@@ -109,8 +120,9 @@ $(document).ready(function () {
 
   if (typeof UNITS != "undefined") {
     let $units = $('#units')
+    $units.css('--grid-size', GRID_SIZE);
     for (let index = 0; index < UNITS.length; index++) {      // For each unit, adds it to the setup page
-      let wrapper = $('<div class="row unit"/>');   //Creates a wrapper to hold the radio button
+      let wrapper = $('<div class="unit"/>');   //Creates a wrapper to hold the radio button
       let unitName = UNITS[index][0];   //Assigns unitName to the first unit in the 'sea' category
       // Each unit is a radio button so that you can select it, it displays the name, width and length of the unit
       let radio = $('<input type="radio" id="'+unitName+'" name="unit" value="'+unitName+'" />');   
@@ -119,7 +131,11 @@ $(document).ready(function () {
       wrapper
         .append(radio)    //Adds the radio button to the wrapper
         //Creates a label holding the name, width and length of the unit (The part that displays on the screen)
-        .append('<label for="'+unitName+'">'+unitName+' ('+unit.width+','+unit.length+')</label>');    
+        .append('<label for="'+unitName+'">' +
+          '<img src="/static/img/'+unitName.toLowerCase()+'.png" alt="'+unitName+'" class="unit-image" ' +
+            'style="--unit-length: '+unit.length+';" />' +
+          '<span>'+unitName+' ('+unit.width+','+unit.length+')</span>' +
+          '</label>');
       $units.append(wrapper);   //Adds the wrapper the unit column
     }
     //Initiales an array on each button on the grid to hold the dropped units
@@ -134,13 +150,10 @@ $(document).ready(function () {
       const radio = $(this).find('input[type=radio]');  
       //select the unit being grabbed if it's not already been used
       if (!radio.is(':checked') && !radio.prop('disabled')) radio.prop('checked', true); 
-      const move = $(movingWrapper); //creates the wrapper (the thing you can move)
-      move.text('X'); //sets the text in the wrapper to the unit name
-      //creates a reference to the unit that was grabbed (so it can be disabled when successfully dropped)
-      move.data('unit', radio.data('unit')); 
-      return move; //returns the wrapper to the javascript that controls the movement
+      return createUnitDragHelper(radio.data('unit'));
     },
     cursor: "move", //changes the cursor to a "move" icon
+    cursorAt: { left: 10, top: 10 },
     start: function(event, ui) { //method that is called before dragging can begin
       //sets the variable "radio" as the radio button that's been grabbed
       const radio = $(this).find('input[type=radio]'); 
@@ -151,7 +164,8 @@ $(document).ready(function () {
   });
 
   $('.game-board.setup td').droppable({   //defines where you can drop (only on the grid)
-    accept: ".unit",  //allows you to drop any of the units but nothing else 
+    accept: ".unit",  //allows you to drop any of the units but nothing else
+    tolerance: "pointer",
     over: function(event, ui){  //When a draggable enters a table cell, add a visual clue to the button.
       $(this).find('button').addClass('hover-shadow');
     },
@@ -172,7 +186,11 @@ $(document).ready(function () {
       //(A becomes 1, D becomes 4. Because of the +1)
       let col = alphabet.indexOf(currentSquare.data('grid').substring(0, 1)) + 1;   
       //Makes row equivalent to the number on the same line as the button dropped on
-      let row = Number(currentSquare.data('grid').substring(1));    
+      let row = Number(currentSquare.data('grid').substring(1));
+      // Add the unit image to the drop square (top-left)
+      currentSquare.append('<img src="/static/img/'+unit.name.toLowerCase()+'.png" alt="'+unit.name+'" ' +
+        'class="placed-unit-image" style="--unit-length: '+length+'; --unit-width: '+width+';" />');
+
       for (let y = 0; y < width; y++) {   //A for loop for the width of the unit
         if (row + y > GRID_SIZE) break;   //Prevents the units from appearing outside of the grid on the y axis
         for (let x = 0; x < length; x++) {    //A for loop for the length of the unit
@@ -189,13 +207,10 @@ $(document).ready(function () {
               const unitToMove = units.pop();   //Gets specifically the last unit that's placed
               //Puts the unit picked up back in the array to allow the other functions to remove it
               units.push(unitToMove);   
-              //Creates a constant variable called move that creats an instance of the global wrapper
-              const move = $(movingWrapper);    
-              move.text('X');   //And displays the text 'X' in the wrapper
-              move.data('unit', unitToMove);    //Adds a reference to the unit to the thing being moved
-              return move;    //Returns move to the library thats allowing the unit to be moved
+              return createUnitDragHelper(unitToMove);
             },
             cursor: "move",   //Changes the pointer into a move curser
+            cursorAt: { left: 10, top: 10 },
             stop: function(event, ui) {   //Defines the function, that's triggered when you stop dragging
               //Creates a constant variable called unit which becomes the data of the unit being moved
               const unit = ui.helper.data('unit');  
@@ -209,6 +224,7 @@ $(document).ready(function () {
               });
               if (!stillOnBoard) {
                 unit.radioButton.prop('disabled', false);   //Makes it so that the radio button is renabled
+                unit.radioButton.closest('.unit').removeClass('opacity-50'); // Remove visual clue
               }
             }
           });
@@ -216,6 +232,7 @@ $(document).ready(function () {
       }
       unit.radioButton.prop('disabled', true); //disable the unit so that it cannot be selected again
       unit.radioButton.prop('checked', false); //unselect the unit
+      unit.radioButton.closest('.unit').addClass('opacity-50'); // Visual clue that unit is placed
 
       //If all the units are disabled (on the board)
       if ($('#units input[name="unit"]').length === $('#units input[name="unit"]:disabled').length) {  
@@ -240,6 +257,8 @@ $(document).ready(function () {
 
       if (units.includes(draggedUnit)) { //If this button has the dragged unit
         $btn.addClass('moving');
+        // Remove the ship image from this button
+        $btn.find('.placed-unit-image').remove();
         //Removing the dragged unit from the specific button that's it's looking at 
         //(will look from them all using the function above)
         const newUnits = units.filter(u => u !== draggedUnit);    
@@ -248,7 +267,10 @@ $(document).ready(function () {
 
         //If no units remain in this square, make the button undraggable
         if (newUnits.length === 0) {
-          $btn.draggable('destroy');    //Make the button undraggable
+          // Only destroy if it was initialized as draggable
+          if ($btn.data('ui-draggable')) {
+            $btn.draggable('destroy');   //Make the button undraggable
+          }
         }
       }
     });
@@ -316,7 +338,7 @@ $(document).ready(function () {
       success: function(response) {
         if (response.valid) {
           // Board is valid, turn off validation and submit the form
-          $('form').off('submit').submit();
+          $('#play-form').off('submit').submit();
         } else {
           // Board is invalid, show error message
           alert('Invalid board configuration: ' + (response.message || 'Please check your unit placement.'));
