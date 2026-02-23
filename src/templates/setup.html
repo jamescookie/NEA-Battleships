@@ -21,6 +21,10 @@
         /* Showing where a unit is by colouring the background */
         .game-board .unit {
             background-color: gray;
+        }        
+        /* Showing which unit is selected by colouring the background */
+        .game-board .unit.selected {
+            background-color: yellow;
         }
         /* Showing when a unit is being moved by colouring the background */
         .game-board .unit.moving {
@@ -79,6 +83,7 @@
                     <input type="hidden" name="random" value="random"/>
                     <button id="randomizer" type="submit">Random</button>
                 </form>
+                <button id="rotate">Rotate</button>
             </div>
         </div>
     </div>

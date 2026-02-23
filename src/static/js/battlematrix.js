@@ -4,14 +4,67 @@ const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 //Helper function to create a drag helper for a unit
 function createUnitDragHelper(unit) {
   if (!unit) return false; // Abort drag if no unit
-  const boardWidth = $('.game-board.setup').width();
-  const cellSize = boardWidth / (GRID_SIZE + 2);
-  const move = $('<div class="opacity-25 z-3"></div>');
-  move.append('<img src="/static/img/'+unit.name.toLowerCase()+'.png" alt="'+unit.name+'" class="unit-drag-image" ' +
-    'style="--unit-length: '+unit.length+'; --cell-size: '+cellSize+'px;" />');
+  const move = $('<div class="bg-transparent opacity-25 z-3"></div>');
+  move.append('<img src="/static/img/'+unit.name.toLowerCase()+'.png" alt="'+unit.name+'" ' +
+    'class="unit-drag-image '+unit.name.toLowerCase()+(unit.rotated ? ' rotated' : '')+'" />');
   //creates a reference to the unit that was grabbed (so it can be disabled when successfully dropped)
   move.data('unit', unit);
   return move;
+}
+
+//Helper function to make a square draggable (used when placing units on the board)
+function makeSquareDraggable(square) {
+  if (square.data('ui-draggable')) return; // Already draggable
+  square.draggable({
+    cancel: false,
+    helper: function() {
+      const units = $(this).data('units-array');
+      const unitToMove = units.pop();
+      units.push(unitToMove);
+      return createUnitDragHelper(unitToMove);
+    },
+    cursor: "move",
+    cursorAt: { left: 10, top: 10 },
+    stop: function(event, ui) {
+      const unit = ui.helper.data('unit');
+      let stillOnBoard = false;
+      $('.game-board.setup td button').each(function() {
+        if (($(this).data('units-array') || []).includes(unit)) {
+          stillOnBoard = true;
+          return;
+        }
+      });
+      if (!stillOnBoard) {
+        unit.radioButton.prop('disabled', false);
+        unit.radioButton.closest('.unit').removeClass('opacity-50');
+      }
+    }
+  });
+}
+
+//Helper function to find all board squares that contain a specific unit and remove it
+function removeUnitFromBoard(board, unit, perButtonCallback) {
+  //Look at all buttons on the grid to find if they have the unit in their data
+  board.find('.unit').each(function () {
+    const $btn = $(this);   //Reference to the button
+    const units = $btn.data('units-array') || [];   //Gets the units that are in that button
+
+    if (units.includes(unit)) { //If this button has the unit
+      //Removing the unit from the specific button that it's looking at
+      //(will look from them all using the function above)
+      const newUnits = units.filter(u => u !== unit);
+      //Giving the modified array back to the button (without the unit)
+      $btn.data('units-array', newUnits);
+      perButtonCallback($btn, newUnits);
+      //If no units remain in this square, make the button undraggable
+      if (newUnits.length === 0) {
+        // Only destroy if it was initialized as draggable
+        if ($btn.data('ui-draggable')) {
+          $btn.draggable('destroy');   //Make the button undraggable
+        }
+      }
+    }
+  });
 }
 
 //This subroutine is for opening full screen
@@ -55,7 +108,7 @@ function handleResponse(response, board, msg) {
 
 //Where you would put javascript functions to change the page
 $(document).ready(function () {
-  $('.game-board').css('--grid-size', GRID_SIZE);
+  $('html').css('--grid-size', GRID_SIZE);
   $('.game-board table') //Finds all game boards and targets the table inside it
   .each(function(index, item) {  //For every table inside game-board, this funtion will execute
     let gameBoard = $(item);  //Creating a variable that refers to the table
@@ -119,8 +172,24 @@ $(document).ready(function () {
   }
 
   if (typeof UNITS != "undefined") {
+    // Add CSS for unit dimensions
+    let unitStyles = '<style>';
+    for (let i = 0; i < UNITS.length; i++) {
+      const name = UNITS[i][0].toLowerCase();
+      const width = UNITS[i][1];
+      const length = UNITS[i][2];
+      unitStyles += '.'+name+' { --unit-length: '+length+'; --unit-width: '+width+'; }';
+    }
+    unitStyles += '</style>';
+    $('head').append(unitStyles);
+
     let $units = $('#units')
-    $units.css('--grid-size', GRID_SIZE);
+
+    // Set --cell-size on html so it's inherited everywhere
+    const board = $('.game-board.setup');
+    const cellSize = board.width() / (GRID_SIZE + 2);
+    $('html').css('--cell-size', cellSize + 'px');
+
     for (let index = 0; index < UNITS.length; index++) {      // For each unit, adds it to the setup page
       let wrapper = $('<div class="unit"/>');   //Creates a wrapper to hold the radio button
       let unitName = UNITS[index][0];   //Assigns unitName to the first unit in the 'sea' category
@@ -132,8 +201,7 @@ $(document).ready(function () {
         .append(radio)    //Adds the radio button to the wrapper
         //Creates a label holding the name, width and length of the unit (The part that displays on the screen)
         .append('<label for="'+unitName+'">' +
-          '<img src="/static/img/'+unitName.toLowerCase()+'.png" alt="'+unitName+'" class="unit-image" ' +
-            'style="--unit-length: '+unit.length+';" />' +
+          '<img src="/static/img/'+unitName.toLowerCase()+'.png" alt="'+unitName+'" class="unit-image '+unitName.toLowerCase()+'" />' +
           '<span>'+unitName+' ('+unit.width+','+unit.length+')</span>' +
           '</label>');
       $units.append(wrapper);   //Adds the wrapper the unit column
@@ -189,7 +257,7 @@ $(document).ready(function () {
       let row = Number(currentSquare.data('grid').substring(1));
       // Add the unit image to the drop square (top-left)
       currentSquare.append('<img src="/static/img/'+unit.name.toLowerCase()+'.png" alt="'+unit.name+'" ' +
-        'class="placed-unit-image" style="--unit-length: '+length+'; --unit-width: '+width+';" />');
+        'class="placed-unit-image '+unit.name.toLowerCase()+(unit.rotated ? ' rotated' : '')+'" />');
 
       for (let y = 0; y < width; y++) {   //A for loop for the width of the unit
         if (row + y > GRID_SIZE) break;   //Prevents the units from appearing outside of the grid on the y axis
@@ -199,35 +267,7 @@ $(document).ready(function () {
           let square = board.find('*[data-grid="'+alphabet[col+x-1]+(row+y)+'"]');    
           square.addClass('unit');    //Making the new square a unit as well
           square.data('units-array').push(unit);    //Puts the new unit into the unit array for that square
-          square.draggable({    //Making the square draggable so the unit can be moved around
-            cancel: false,    //This allows buttons to be moved
-            helper: function() {    //What to do once you start moving the unit
-              //Creates a constant variable called units to get the all the units in the square
-              const units = $(this).data('units-array');    
-              const unitToMove = units.pop();   //Gets specifically the last unit that's placed
-              //Puts the unit picked up back in the array to allow the other functions to remove it
-              units.push(unitToMove);   
-              return createUnitDragHelper(unitToMove);
-            },
-            cursor: "move",   //Changes the pointer into a move curser
-            cursorAt: { left: 10, top: 10 },
-            stop: function(event, ui) {   //Defines the function, that's triggered when you stop dragging
-              //Creates a constant variable called unit which becomes the data of the unit being moved
-              const unit = ui.helper.data('unit');  
-              let stillOnBoard = false;
-              $('.game-board.setup td button').each(function() {    //Finds each button and runs the following function
-                //Checks to see if the unit being moved is still on the board (in the array)
-                if (($(this).data('units-array') || []).includes(unit)) {   
-                  stillOnBoard = true;
-                  return;
-                }
-              });
-              if (!stillOnBoard) {
-                unit.radioButton.prop('disabled', false);   //Makes it so that the radio button is renabled
-                unit.radioButton.closest('.unit').removeClass('opacity-50'); // Remove visual clue
-              }
-            }
-          });
+          makeSquareDraggable(square);    //Making the square draggable so the unit can be moved around
         }
       }
       unit.radioButton.prop('disabled', true); //disable the unit so that it cannot be selected again
@@ -238,6 +278,11 @@ $(document).ready(function () {
       if ($('#units input[name="unit"]').length === $('#units input[name="unit"]:disabled').length) {  
         $('#play').prop('disabled', false); //Then renable
       }
+
+      //Removes the selected class from all units on the board
+      $('.unit.selected', board).each(function() {
+        $(this).removeClass('selected');
+      });
     }
   });
 
@@ -249,30 +294,10 @@ $(document).ready(function () {
     //Puts the unit picked up back in the array to allow the other functions to remove it
      $(this).data('units-array').push(draggedUnit);   
     const board = $('.game-board.setup');
-
-    //Look at all buttons on the grid to find if they have the dragged unit in their data
-    board.find('.unit').each(function () { 
-      const $btn = $(this);   //Reference to the button
-      const units = $btn.data('units-array') || [];   //Gets the units that are in that button
-
-      if (units.includes(draggedUnit)) { //If this button has the dragged unit
-        $btn.addClass('moving');
-        // Remove the ship image from this button
-        $btn.find('.placed-unit-image').remove();
-        //Removing the dragged unit from the specific button that's it's looking at 
-        //(will look from them all using the function above)
-        const newUnits = units.filter(u => u !== draggedUnit);    
-        //Giving the modified array back to the button (without the dragged unit)
-        $btn.data('units-array', newUnits);   
-
-        //If no units remain in this square, make the button undraggable
-        if (newUnits.length === 0) {
-          // Only destroy if it was initialized as draggable
-          if ($btn.data('ui-draggable')) {
-            $btn.draggable('destroy');   //Make the button undraggable
-          }
-        }
-      }
+    removeUnitFromBoard(board, draggedUnit, function ($btn) {
+      $btn.addClass('moving');
+      // Remove the ship image from this button
+      $btn.find('.placed-unit-image.'+draggedUnit.name.toLowerCase()).remove();
     });
   });
 
@@ -288,6 +313,72 @@ $(document).ready(function () {
       //If all ships are gone from this square then it shouldn't look like a unit anymore
       }
     });
+  });
+
+  //When you click on the board, select a unit if there is one there
+  $('.game-board.setup').on('click', 'button', function() { //Looks for any button inside game-board
+    const board = $('.game-board.setup');
+    //Removes the selected class from all units on the board
+    $('.unit.selected', board).each(function() {
+      $(this).removeClass('selected');
+    });
+    const selectedUnit = $(this).data('units-array').pop();
+    //Puts the unit picked up back in the array to allow the other functions to remove it
+    $(this).data('units-array').push(selectedUnit);
+
+    //Look at all buttons on the grid to find if they have the dragged unit in their data
+    board.find('.unit').each(function () {
+      const $btn = $(this);   //Reference to the button
+      const units = $btn.data('units-array') || [];   //Gets the units that are in that button
+      if (units.includes(selectedUnit)) { //If this button has the dragged unit
+        $btn.addClass('selected'); //Highlight it
+      }
+    });
+  });
+
+  //When you click the rotate button, it rotates the currently selected unit (if there is one)
+  $('#rotate').click(function (e) {
+    const board = $('.game-board.setup');
+    const btn = $('.unit.selected', board)[0]; //Finds the first button with the selected class
+    if (!btn) return; //If there isn't one, then do nothing
+
+    // Finds the last unit placed on the selected button
+    const selectedUnit = $(btn).data('units-array').pop();
+
+    // Rotate the unit image on the button
+    $(btn).find('.placed-unit-image.'+selectedUnit.name.toLowerCase()).toggleClass('rotated');
+
+    // Swap length and width
+    const tempLength = selectedUnit.length;
+    selectedUnit.length = selectedUnit.width;
+    selectedUnit.width = tempLength;
+
+    // Toggle rotation state
+    selectedUnit.rotated = !selectedUnit.rotated;
+
+    removeUnitFromBoard(board, selectedUnit, function ($btn, newUnits) {
+      $btn.removeClass('selected');
+      if (newUnits.length === 0) {
+        $btn.removeClass('unit');
+      }
+    });
+
+    // Re-place the unit at the same top-left position with new dimensions
+    const grid = $(btn).data('grid');
+    let col = alphabet.indexOf(grid.substring(0, 1)) + 1;
+    let row = Number(grid.substring(1));
+
+    // Re-add unit to all covered squares
+    for (let y = 0; y < selectedUnit.width; y++) {
+      if (row + y > GRID_SIZE) break;
+      for (let x = 0; x < selectedUnit.length; x++) {
+        if (col + x > GRID_SIZE) break;
+        let square = board.find('*[data-grid="'+alphabet[col+x-1]+(row+y)+'"]');
+        square.addClass('unit selected');
+        square.data('units-array').push(selectedUnit);
+        makeSquareDraggable(square);
+      }
+    }
   });
 
   // Only allowed to submit the form if there are no overlapping units and board is valid

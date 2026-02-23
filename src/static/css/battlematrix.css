@@ -56,3 +56,8 @@ html body {
     pointer-events: none;
     z-index: 1;
 }
+.rotated {
+    transform: rotate(90deg);
+    transform-origin: top left;
+    translate: calc(var(--unit-width) * var(--cell-size)) 0;
+}
