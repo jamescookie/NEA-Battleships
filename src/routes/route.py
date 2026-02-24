@@ -136,4 +136,3 @@ def creatingRoutes(app, request, render_template):
         #and to determine whether they have won or not, or whether the robot needs to shoot as well
         #Needs to return the value, otherwise the 'turn' won't end
         return game.sinking(hitOrMiss, foundGame, gameId, buttonClicked)
-

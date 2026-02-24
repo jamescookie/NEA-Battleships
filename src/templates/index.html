@@ -10,12 +10,19 @@
     <!--Makes the name of the web page-->
     <title>Battle Matrix Home Screen</title>
 
+    <!-- Link to the image for the home screen -->
+    <style>
+        body{
+            background-image: url("{{ url_for('static', filename='img/homescreens/sea.png') }}");
+        }
+    </style>
+
 <!--Closes the header-->
 </head>
 <!--Opens the body and makes it a colour-->
-<body style="background-color: cornflowerblue;">
+<body>
     <!--Creates, colours,  styles and closes the title-->
-    <h1 style="color: chartreuse;">Welcome to Battle Matrix</h1>
+    <h1 style="color: chartreuse; text-align: center; font-size: 500%;">Battle Matrix</h1>
 
     <!--Creates a multiple choice drop down tab to select which map you want
     and can be found in the code with environment-->

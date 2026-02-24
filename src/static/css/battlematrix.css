@@ -1,5 +1,9 @@
 html body {
     font-family: 'Black Ops One', Arial, sans-serif;
+
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: 100% 100%;
 }
 .game-board {
     aspect-ratio: 1 / 1; /* Keeps the board square */
