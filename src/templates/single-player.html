@@ -9,11 +9,20 @@
     <!--Makes the name of the web page-->
     <title>Single Player</title>
 
+    <!-- Link to the image for the home screen -->
+    <style>
+        body{
+            background-image: url("{{ url_for('static', filename='img/homescreens/sea2.png') }}");
+        }
+    </style>
+
 <!--Closes the header-->
 </head>
 
 <!--Opens the body-->
 <body>
+    <!--Creates, colours, styles and closes the title-->
+    <h1 style="color: chartreuse; text-align: center; font-size: 500%;">Single Player</h1>
     
     <!--form for going back to the home screen, which is why the method for the '/' route required both post and get-->
     <form action="/" method="post">
@@ -35,7 +44,7 @@
         <input type="hidden" name="gridSize" value="{{gridSize}}"/>
 
         <!--Submit button to take you to the next page (the setup html)-->
-        <button type="submit">Easy Robot</button>
+        <button type="submit">Easy</button>
     
     <!--Closing tag-->
     </form>
@@ -51,7 +60,7 @@
         <input type="hidden" name="gridSize" value="{{gridSize}}"/>
         
         <!--Submit button to take you to the next page (the setup html)-->
-        <button type="submit">Medium Robot</button>
+        <button type="submit">Medium</button>
     
     <!--Closing tag-->
     </form>
@@ -67,7 +76,7 @@
         <input type="hidden" name="gridSize" value="{{gridSize}}"/>
         
         <!--Submit button to take you to the next page (the setup html)-->
-        <button type="submit">Hard Robot</button>
+        <button type="submit">Hard</button>
     
     <!--Closing tag-->
     </form>

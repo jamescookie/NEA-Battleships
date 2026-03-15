@@ -10,6 +10,12 @@
     <title>Setup</title>
 
     <style>
+        body {
+            background-image: url("{{ url_for('static', filename='img/homescreens/setup.png') }}");
+            color: chartreuse;
+            background-attachment: fixed;
+            background-size: 100% 100%;
+        }
         /* Hides the radio button */
         [type='radio'] {
             display: none; 
@@ -30,6 +36,14 @@
         .game-board .unit.moving {
             opacity: 50%;
         }
+        .game-board button {
+            background-color: transparent;
+            border-color: color-mix(in srgb, chartreuse 60%, transparent);
+        }
+        .btn {
+            background-color: chartreuse;
+            color: #000;
+        }
     </style>    <!--Custom styles for my page-->
 
 <!--Closes the header-->
@@ -39,24 +53,32 @@
 <body>
 
     <!-- Seperates the columns of the page to layout the different sections -->
-    <div class="container">
+    <div class="container-fluid min-vh-100 d-flex flex-column">
 
-        <!--Creates a message with a specific font and clour as a heading-->
-        <h1 style="color: khaki;">You made it to setup!</h1>
-
-        <!--Creating a link back to the previous page-->
-        <form action="/{{previousPage}}" method="post">
-
-            <input type="hidden" name="gameId" value="{{ gameId }}"/>
-
-            <button type="submit">Back</button>
-
-        <!--Closing tags-->
-        </form>
-
-        <div class="row">
-            <!-- To hold the units that you'll be placing -->
+        <div class="row pt-4 z-1">
             <div class="col-3">
+                <!--Creating a link back to the previous page-->
+                <form action="/{{previousPage}}" method="post">
+
+                    <input type="hidden" name="gameId" value="{{ gameId }}"/>
+
+                    <button type="submit" class="btn">Back</button>
+
+                    <!--Closing tags-->
+                </form>
+            </div>
+            <div class="col-6 text-center">
+                <!--Creates a message with a specific font and clour as a heading-->
+                <h1 style="color: chartreuse; text-align: center; font-size: 500%;">Set Up</h1>
+            </div>
+            <div class="col-3">
+
+            </div>
+        </div>
+
+        <div class="row align-items-center flex-grow-1" style="margin-top: -7rem">
+            <!-- To hold the units that you'll be placing -->
+            <div class="col-3 text-center">
                  <h2>Units</h2>
                  <div id="units">
                  </div>
@@ -68,22 +90,22 @@
                 </div>            
             </div>
             <!-- Last column has controls -->
-            <div class="col-3">
+            <div class="col-3 d-flex flex-column align-items-center gap-5">
                 <!--Passes the information on which map and what difficulty of robot you will be playing against-->
                 <form id="play-form" action="/gameplay" method="post">
                     <input type="hidden" name="game-id" value="{{ gameId }}"/>
                     <input type="hidden" name="random" value="notRandom"/>
                     <!-- Disabled until all ships are placed -->
-                    <button id="play" type="submit" disabled="disabled">PLAY!!!!</button>     
+                    <button id="play" type="submit" disabled="disabled" class="btn">PLAY!!!!</button>
                 </form>
 
                 <!--This will do the exact same thing as the play button, but will make the user grid random-->
                 <form id="randomize-form" action="/gameplay" method="post">
                     <input type="hidden" name="game-id" value="{{ gameId }}"/>
                     <input type="hidden" name="random" value="random"/>
-                    <button id="randomizer" type="submit">Random</button>
+                    <button id="randomizer" type="submit" class="btn">Random</button>
                 </form>
-                <button id="rotate">Rotate</button>
+                <button id="rotate" class="btn">Rotate</button>
             </div>
         </div>
     </div>
