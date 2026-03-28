@@ -15,27 +15,10 @@
         /* Title and image */
         body {
             background-image: url("{{ url_for('static', filename='img/homescreens/sea.png') }}");
-            color: chartreuse;
         }
         /* Arrows for the carousel */
         .carousel i {
             color: chartreuse;
-        }
-        /* Background of the button */
-        .btn {
-            background-color: chartreuse;
-            color: #000;
-        }
-        /* When hovering over buttons */
-        .btn:hover:not(:disabled) {
-            background-color: color-mix(in srgb, chartreuse 80%, transparent);
-            color: #000;
-        }
-        /* Disabled background of the button */
-        .btn:disabled {
-            background-color: chartreuse;
-            color: #000;
-            opacity: 0.45;
         }
     </style>
 
@@ -43,21 +26,17 @@
 </head>
 <!--Opens the body and makes it a colour-->
 <body>
-<div class="container-fluid min-vh-100 d-flex flex-column">
+<div class="container-fluid min-vh-100 d-flex flex-column justify-content-between">
     <div class="row justify-content-center pt-4">
         <div class="col-auto text-center">
-            <h1 style="font-size: 5rem;">Battle Matrix</h1>
+            <h1>Battle Matrix</h1>
         </div>
     </div>
-    <div class="row flex-grow-1 align-items-end">
+    <div class="row justify-content-center">
         <div class="col">
             <form>
                 <input id="environment-input" type="hidden" name="environment" value="sea"/>
                 <div class="row justify-content-center gx-5 gy-3">
-                    <div class="col-auto">
-                        <input type="submit" formaction="/multi-player" value="Multi Player" 
-                               disabled="disabled" class="btn fs-1 px-5 py-3"/>
-                    </div>
                     <div class="col-auto">
                         <input type="submit" formaction="/single-player" value="Single Player" 
                                class="btn fs-1 px-5 py-3"/>
@@ -66,7 +45,7 @@
             </form>
         </div>
     </div>
-    <div class="row justify-content-center flex-grow-1 align-items-start mt-3">
+    <div class="row justify-content-center pb-4">
         <div class="col-md-4 col-12 text-center">
             <div id="env-carousel" class="carousel slide" data-bs-wrap="true">
                 <div class="carousel-inner fs-1 fw-bold">

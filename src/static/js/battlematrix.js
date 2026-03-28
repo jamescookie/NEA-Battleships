@@ -91,16 +91,21 @@ function selectUnit(board, selectedButton) {
 }
 
 //This subroutine is for opening full screen
-function openFullscreen() {
-  const elem = document.documentElement;    //finds the object with the full screen function in it
-  if (elem.requestFullscreen) {     //checks to make sure that the function (going full screen) exists
-    elem.requestFullscreen();   //makes the whole page go fullscreen
-  }
-}
-//This subroutine is for exiting full screen
-function exitFullscreen() {
-  if (document.fullscreenElement) {     //same as open full screen but for exiting
-    document.exitFullscreen();
+function toggleFullscreen(button) {
+  fullscreen = !fullscreen;   //Toggles the boolean value of fullscreen
+  const icon = $(button).find('i');
+  icon.removeClass('bi-fullscreen-exit bi-arrows-fullscreen');
+  if (fullscreen) {
+    icon.addClass('bi-fullscreen-exit');
+    const elem = document.documentElement;    //finds the object with the full screen function in it
+    if (elem.requestFullscreen) {     //checks to make sure that the function (going full screen) exists
+      elem.requestFullscreen();   //makes the whole page go fullscreen
+    }
+  } else {
+    icon.addClass('bi-arrows-fullscreen');
+    if (document.fullscreenElement) {     //same as open full screen but for exiting
+      document.exitFullscreen();
+    }
   }
 }
 
@@ -121,7 +126,7 @@ function handleResponse(response, board, msg) {
     }
     if (response.win === true) {
       // Once someone has won, the hidden messages will show, depending on who won
-      msg.show();
+      new bootstrap.Modal(msg[0]).show();
       $('.game-board').find($('button')).prop("disabled", true); //Disables all of the opponents boards buttons
     }
   } 
@@ -173,10 +178,10 @@ $(document).ready(function () {
       success: function(response) {
         // Tells the function 'handleResponse' that the user has made a turn on the opponent's board 
         // and a win message might need to be shown
-        handleResponse(response.userTurn, $('.opponent'), $(".win-message-user"));
+        handleResponse(response.userTurn, $('.opponent'), $("#win-message-user"));
         if (!response.userTurn.win) {
           // This does the same thing, but will not run if the user has won
-          handleResponse(response.computerTurn, $('.user'), $(".win-message-opponent"));
+          handleResponse(response.computerTurn, $('.user'), $("#win-message-opponent"));
         }
       }
     });

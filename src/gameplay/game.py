@@ -20,6 +20,25 @@ class Game:
         #Setting the amount of ships sunken by the user and robot to 0
         self.userShipsSunk = 0
         self.robotShipsSunk = 0
+        #Keeping a track of where the robots have shot and what direction they're shooting in
+        self.robotShots = []
+        self.robotDirection = [["Y", -1],
+                               ["X", 1],
+                               ["Y", 1],
+                               ["X", -1]]
+        self.robotAxis = None
+        self.robotValue = None
+        self.robotFirstHit = [["longship", None],
+                            #   ["carrier", None],
+                              ["battleship", None],
+                              ["cruiser", None],
+                              ["destroyer", None],
+                              ["submarine", None]]
+        self.robotAttacking = None
+
+        #Only for hard robot
+        self.handicap = 30
+        
         #Setting the difficulty to nothing so that it can be changed
         self.difficulty = None
         #Adding this game to the array of games
@@ -62,18 +81,55 @@ def hitOrMiss(location, foundGame, board):
         #the same coordinates as the location of a ship then:
         if location == spots[i]:
             #Makes 'type' the unit that is in that spot
-            type = grid.gridReferenceToCoords(correctGrid, location, None)
+            type = grid.gridReferenceToCoords(correctGrid, location, None, False)
             for j in range (len(foundGame.units)):
                 #foundGame.units is the units associated to the game being played only
                 if type == foundGame.units[j][0]:
                     width = foundGame.units[j][1]
                     length = foundGame.units[j][2]
             #Changes the grid to show the 'longShip', for example, now says 'longShip_hit'
-            grid.gridReferenceToCoords(correctGrid, location, (str(type) + "_hit"))
+            grid.gridReferenceToCoords(correctGrid, location, (str(type) + "_hit"), False)
+
             #Creates a list of every time that instance appears
             coordinatesArray = grid.findingTroops(correctGrid, False, correctGrid[y][x])
-            #If statement to check if the every part of the ship has been hit
+
+            if board == "user":
+                #If only one part of that troop has been hit
+                if len(coordinatesArray) == 1:
+                    #Removes the _hit from the unit that has been hit
+                    checkingAnswer = type.split("_hit")
+                    for l in range (len(foundGame.robotFirstHit)):
+                        #If the unit hit is in the array
+                        if checkingAnswer[0] == foundGame.robotFirstHit[l][0]:
+                        
+                            #Changing an array into a string E.g. ['D', '5'] becomes 'D5'
+                            lastGridReference = str(coordinatesArray[0][0]) + str(coordinatesArray[0][1:])
+
+                            #Changing the grid reference into coordinates that python can use
+                            lastCoordinates = grid.gridReferenceToCoords(correctGrid, lastGridReference, None, True)
+
+                            #Concatenates the coordinates into a string
+                            lastCoordinates = str(lastCoordinates[0]) + str(lastCoordinates[1])
+                            
+                            #Record the coordinates of the first time that specific unit has been hit
+                            foundGame.robotFirstHit[l][1] = lastCoordinates          
+
+            #If statement to check if every part of the ship has been hit
             if len(coordinatesArray) == width * length:
+
+                #Changing ships to _sunk if the full ship is sunk
+                for index in range (0, len(coordinatesArray)):
+                    grid.gridReferenceToCoords(correctGrid, coordinatesArray[index], (str(type) + "_sunk"), False)
+
+                if board == "user":
+                    #Removes the ship that has been sunk from the robotFirstHit array
+                    #This is to avoid errors when checking if a ship has been hit in the mediumRobot file
+                    for k in range (len(foundGame.robotFirstHit)):
+                        if foundGame.robotFirstHit[k][0] == str(type):
+                            del foundGame.robotFirstHit[k]
+                            foundGame.robotAttacking = None
+                            break
+                        
                 #Increments the attribute of the amount of ships sunk by 1 for whoever took the turn
                 setattr(foundGame, board + "ShipsSunk", correctShipsSunk + 1)
                 return "sunk", coordinatesArray, getattr(foundGame, board + "ShipsSunk")
@@ -82,7 +138,7 @@ def hitOrMiss(location, foundGame, board):
         else:
             i += 1
     #Allows the robot to not shoot in the same place by marking the empty spot as a missed shot
-    grid.gridReferenceToCoords(correctGrid, location, "E_miss")
+    grid.gridReferenceToCoords(correctGrid, location, "E_miss", False)
     return False, None, None
 
 
@@ -108,7 +164,7 @@ def robotWinning(userHitOrMiss, foundGame, gameId, buttonClicked):
     #Importing the correct robot difficulty using dynamic import and only importing the robot needed
     robotType = importlib.import_module("." + str(foundGame.difficulty) + "Robot", 'robots')
     #Fires a random shot at the users board
-    robotCoordinates = robotType.robotShooting(foundGame.userGrid)
+    robotCoordinates = robotType.robotChecking(foundGame.userGrid, foundGame)
     #Decides whether the shot sunk, hit or missed a ship
     robotHitOrMiss = hitOrMiss(robotCoordinates, foundGame, "user")
     if robotHitOrMiss[0] == 'sunk':

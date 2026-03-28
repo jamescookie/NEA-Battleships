@@ -1,5 +1,6 @@
-html body {
+body {
     font-family: 'Black Ops One', Arial, sans-serif;
+    color: chartreuse;
 
     background-repeat: no-repeat;
     background-attachment: fixed;
@@ -39,7 +40,6 @@ html body {
     height: auto;
 }
 #units label {
-    display: block;
     padding: 10px;
     cursor: pointer;
 }
@@ -64,4 +64,22 @@ html body {
     transform: rotate(90deg);
     transform-origin: top left;
     translate: calc(var(--unit-width) * var(--cell-size)) 0;
+}
+/* button styles */
+.btn {
+    background-color: chartreuse;
+    color: #000;
+}
+.btn:hover:not(:disabled) {
+    background-color: color-mix(in srgb, chartreuse 80%, transparent);
+    color: #000;
+}
+.btn:disabled {
+    background-color: chartreuse;
+    color: #000;
+    opacity: 0.45;
+}
+/* title styles */
+h1 {
+    font-size: 5rem;
 }

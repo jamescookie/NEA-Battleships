@@ -21,65 +21,73 @@
 
 <!--Opens the body-->
 <body>
-    <!--Creates, colours, styles and closes the title-->
-    <h1 style="color: chartreuse; text-align: center; font-size: 500%;">Single Player</h1>
-    
-    <!--form for going back to the home screen, which is why the method for the '/' route required both post and get-->
-    <form action="/" method="post">
+    <div class="container-fluid min-vh-100 d-grid">
+        <div class="row justify-content-center align-items-center pt-4">
+            <div class="col-2 col-sm-3">
+                <!--Creating a link back to the home page-->
+                <form action="/" method="post" class="mb-0">
+                    <input type="hidden" name="gameId" value="{{gameId}}"/>
+                    <button type="submit" class="btn">Home</button>
+                </form>
+            </div>
+            <div class="col-10 col-sm-6 text-center">
+                <h1>Single Player</h1>
+            </div>
+            <div class="col-0 col-sm-3">
 
-        <input type="hidden" name="gameId" value="{{gameId}}"/>
-        <button type="submit">Home</button>
+            </div>
+        </div>
 
-    <!--Closing tags-->
-    </form>
+        <div class="row justify-content-center align-items-center">
+            <div class="col-auto">
+                <!--form for submiting future data to the setup-->
+                <form action="/setup" method="post" class="mb-0">
+                    <!--Tells my program which page I came from-->
+                    <input type="hidden" name="previous-page" value="single-player"/>
+                    <input type="hidden" name="robot" value="easy"/>
+                    <input type="hidden" name="gameId" value="{{gameId}}"/>
+                    <input type="hidden" name="units" value="{{units}}"/>
+                    <input type="hidden" name="gridSize" value="{{gridSize}}"/>
 
-    <!--form for submiting future data to the setup-->
-    <form action="/setup" method="post">
+                    <!--Submit button to take you to the next page (the setup html)-->
+                    <button type="submit" class="btn fs-1 px-5 py-3">Easy</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="row justify-content-center align-items-center">
+            <div class="col-auto">
+                <!--form for submiting future data to the setup-->
+                <form action="/setup" method="post" class="mb-0">
+                    <!--Tells my program which page I came from-->
+                    <input type="hidden" name="previous-page" value="single-player"/>
+                    <input type="hidden" name="robot" value="medium"/>
+                    <input type="hidden" name="gameId" value="{{gameId}}"/>
+                    <input type="hidden" name="units" value="{{units}}"/>
+                    <input type="hidden" name="gridSize" value="{{gridSize}}"/>
+
+                    <!--Submit button to take you to the next page (the setup html)-->
+                    <button type="submit" class="btn fs-1 px-5 py-3">Medium</button>
+                </form>
+            </div>
+        </div>
         
-        <!--Tells my program which page I came from-->
-        <input type="hidden" name="previous-page" value="single-player"/>
-        <input type="hidden" name="robot" value="easy"/>
-        <input type="hidden" name="gameId" value="{{gameId}}"/>
-        <input type="hidden" name="units" value="{{units}}"/>
-        <input type="hidden" name="gridSize" value="{{gridSize}}"/>
+        <div class="row justify-content-center align-items-center">
+            <div class="col-auto">
+                <!--form for submiting future data to the setup-->
+                <form action="/setup" method="post" class="mb-0">
+                    <!--Tells my program which page I came from-->
+                    <input type="hidden" name="previous-page" value="single-player"/>
+                    <input type="hidden" name="robot" value="hard"/>
+                    <input type="hidden" name="gameId" value="{{gameId}}"/>
+                    <input type="hidden" name="units" value="{{units}}"/>
+                    <input type="hidden" name="gridSize" value="{{gridSize}}"/>
 
-        <!--Submit button to take you to the next page (the setup html)-->
-        <button type="submit">Easy</button>
-    
-    <!--Closing tag-->
-    </form>
-
-    <!--form for submiting future data to the setup-->
-    <form action="/setup" method="post">
-        
-        <!--Tells my program which page I came from-->
-        <input type="hidden" name="previous-page" value="single-player"/>
-        <input type="hidden" name="robot" value="easy"/>
-        <input type="hidden" name="gameId" value="{{gameId}}"/>
-        <input type="hidden" name="units" value="{{units}}"/>
-        <input type="hidden" name="gridSize" value="{{gridSize}}"/>
-        
-        <!--Submit button to take you to the next page (the setup html)-->
-        <button type="submit">Medium</button>
-    
-    <!--Closing tag-->
-    </form>
-
-    <!--form for submiting future data to the setup-->
-    <form action="/setup" method="post">
-        
-        <!--Tells my program which page I came from-->
-        <input type="hidden" name="previous-page" value="single-player"/>
-        <input type="hidden" name="robot" value="easy"/>
-        <input type="hidden" name="gameId" value="{{gameId}}"/>
-        <input type="hidden" name="units" value="{{units}}"/>
-        <input type="hidden" name="gridSize" value="{{gridSize}}"/>
-        
-        <!--Submit button to take you to the next page (the setup html)-->
-        <button type="submit">Hard</button>
-    
-    <!--Closing tag-->
-    </form>
-    
+                    <!--Submit button to take you to the next page (the setup html)-->
+                    <button type="submit" class="btn fs-1 px-5 py-3">Hard</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

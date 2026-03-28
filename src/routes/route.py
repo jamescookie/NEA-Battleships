@@ -2,6 +2,7 @@
 from flask import jsonify
 from gameplay import game
 from gameplay import grid
+from robots import hardRobot
 
 #The creatingRoutes subroutine takes the parameters 'app' and 'render_template' 
 #because they're only defined in the main program 
@@ -59,12 +60,14 @@ def creatingRoutes(app, request, render_template):
         #from None to whatever button you clicked on
         game.settingAttr(foundGame, 'difficulty', request.form['robot'])
 
+        difficulty = foundGame.difficulty == 'hard'
+
         # previousPage, which came from the hidden input from the other pages
         #This sends the same parameters as before, but also previousPage for single player or multiplayer,
         #depending on where the user came from
         return render_template('setup.html', previousPage = request.form['previous-page'], 
                                gameId = foundGame.id, units = foundGame.units, 
-                               gridSize = grid.gridSize)
+                               gridSize = grid.gridSize, difficulty = difficulty)
 
     #This subroutine is to check whether all the units are within the grid
     @app.route('/validate-board', methods=['POST'])
@@ -97,9 +100,20 @@ def creatingRoutes(app, request, render_template):
         #Sets foundGame to the uuid found in the games array
         foundGame = game.findGame(gameId)
 
+        #Checks to see if the random button was not clicked
+        if request.form['random'] != "random":
+
+            #Only if the difficulty is hard
+            if foundGame.difficulty == 'hard':
+                hardRobot.handicap(request.form['handicap'], foundGame, False)
+
         #Checks to see if the random button was clicked
         if request.form['random'] == "random":
 
+            #Only if the difficulty is hard
+            if foundGame.difficulty == 'hard':
+                hardRobot.handicap(request.form['handicap'], foundGame, True)
+                
             #Uses the settingAttr subroutine to change the userGrid to random
             game.settingAttr(foundGame, 'userGrid', grid.grid(foundGame.units, 'user'))
 
@@ -109,6 +123,7 @@ def creatingRoutes(app, request, render_template):
             #Every time the 'PLAY!!!!' button is clicked a new object in the game class is created
             #(with it's own uuid), it also passes the difficulty of the robot and the map to use
             return render_template('battlematrix.html', gridSize = grid.gridSize, gameId = gameId)
+    
     
     #Everytime a button has been clicked by the user, this subroutine will run
     @app.route('/take-turn', methods=['POST'])

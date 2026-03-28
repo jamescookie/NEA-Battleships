@@ -8,9 +8,13 @@
 
     <!--Makes the name of the web page-->
     <title>Gameplay</title>
-    
+
     <!-- Colours the button after clicked -->
-    <style>     
+    <style>    
+        /* Link to the image for the home screen */
+        body{
+            background-image: url("{{ url_for('static', filename='img/homescreens/seaGameplay.png') }}");
+        }
         /* Makes the square clicked red if the response returns with hit */
         .game-board .hit {
             background-color: red;
@@ -23,6 +27,16 @@
         .game-board .miss {
             background-color: green;
         }
+        .game-board button {
+            background-color: color-mix(in srgb, white 40%, transparent);
+            border-color: white;
+        }
+        .game-board td, .game-board th {
+            color: white;
+        }
+        h2 {
+            color: white;
+        }
     </style>
 <!--Closes the header-->
 </head>
@@ -30,59 +44,80 @@
 <!--Opens the body-->
 <body>
 
-    <div class="container"> <!--How the styles start working-->
-        <!--Creates a button that the user can click that will make the function on javascript run-->
-        <button onclick="openFullscreen()"> <!--Is to make the maximise icon-->
-            <i class="bi bi-arrows-fullscreen"></i>
-        </button>
-        <!--Creates a button that the user can click that will make the function on javascript run-->
-        <button onclick="exitFullscreen()"> <!--Is to make the minimise icon-->
-            <i class="bi bi-fullscreen-exit"></i>
-        </button>
+    <div class="container-fluid min-vh-100"> <!--How the styles start working-->
+        <div class="row mb-4 pt-4">
+            <div class="col-3 d-flex align-items-centre gap-2">
+                <!--Creates a button that the user can click that will make the function on javascript run-->
+                <button onclick="toggleFullscreen(this)">
+                    <i class="bi bi-arrows-fullscreen"></i>
+                </button>
+                <!--A form that makes you go all the way back to the home screen by pressing quit-->
+                <form action="/" method="post">
+                    <input type="hidden" name="gameId" value="{{gameId}}"/>
+                    <button type="submit" class="btn">Home</button>
+                </form>
+            </div>
+        </div>
 
-        <!--Creates spaces to make it easier on the eyes to see what is going on-->
-        <br>
-        <br>
-        
-        <!--A form that makes you go all the way back to the home screen by pressing quit-->
-        <form action="/" method="post">
-
-            <input type="hidden" name="gameId" value="{{gameId}}"/>
-            <button type="submit">QUIT :(</button>
-
-        </form>
-        <h1 style="color:chocolate;">This is where you will play!</h1>
         <!-- These messages will only appear once the user or robot has won -->
-        <h2 class="win-message-user" style="display: none; color: lime;">You Win</h2>
-        <h2 class="win-message-opponent" style="display: none; color: lime;">
-            It's statistically impossible to find this message unless you tried to fail, good job!</h2>
+        <div class="modal fade" id="win-message-user">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Congratulations, You win!
+                    </div>
+                    <div class="modal-footer">
+                        <form action="/" method="post">
+                            <input type="hidden" name="gameId" value="{{gameId}}"/>
+                            <button type="submit">Home</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="win-message-opponent">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        You lost!
+                    </div>
+                    <div class="modal-footer">
+                        <form action="/" method="post">
+                            <input type="hidden" name="gameId" value="{{gameId}}"/>
+                            <button type="submit">Home</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <div class="row">   <!--Making a bootstrap row for laying out-->
-            <div class="col-3"></div>
-            <div class="col-6">    <!-- To make the formatting correct for the grid -->
+        <div class="row justify-content-xxl-center column-gap-xxl-5">   <!--Making a bootstrap row for laying out-->
+            <div class="col-12 col-sm-6 col-xxl-4">    <!-- To make the formatting correct for the grid -->
                 <h2>Opponent's Board</h2>
                 <div class="game-board opponent">    <!--So the javascript find this table-->
                     <table class="table">   <!--Making a bootstrap table that will hold the board-->
                     </table>
                 </div>
             </div>
-            <div class="col-3"></div>
-        </div>
-        <div class="row">   <!--Same table but for my ships instead-->
-            <div class="col-3"></div>
-            <div class="col-6">    <!-- To make the formatting correct for the grid -->
+            <div class="col-12 col-sm-6 col-xxl-4">    <!-- To make the formatting correct for the grid -->
                 <h2>My Board</h2>
                 <div class="game-board user">
                     <table class="table"></table>
                 </div>            
             </div>
-            <div class="col-3"></div>
         </div>
     </div>
 
     <script>
         const GRID_SIZE = Number("{{ gridSize }}");   //Passing the python variable gridSize to JavaScript
         const GAME_ID = "{{ gameId }}";     //Passing the python varibale gameId to JavaScript
+        let fullscreen = false;
     </script>   
 
     <!-- Common scripts -->

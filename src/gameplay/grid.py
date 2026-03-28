@@ -34,10 +34,10 @@ def checkingTroops(grid, troop):
         #Checking if the directionArray is full or empty
         if len(directionArray) == 4 or len(directionArray) == 0:
             directionArray = [["Y", -1],
-                            ["X", 1],
-                            ["Y", 1],
-                            ["X", -1]]
-            #While loop to keep creating new starting coordinates if the ones created are inaccurate 
+                              ["X", 1],
+                              ["Y", 1],
+                              ["X", -1]]
+            #While loop to keep creating new starting coordinates if the ones created are invalid
             #(on top of another ship)
             while locationCheck == False:
                 #Creating the coordinates for the ship
@@ -46,7 +46,7 @@ def checkingTroops(grid, troop):
                 #Logging the location of the original coordinates because the yAxis and xAsis are going to get changed
                 coordinates = [yAxis, xAxis]
                 #locationCheck will come back true or false
-                locationCheck = canIPlaceAUnitHere(yAxis, xAxis, grid)
+                locationCheck = canIPlaceAUnitHere(yAxis, xAxis, grid, None, False)
 
         #This is to make sure that the random integer next won't break when there's only one item in the array
         if len(directionArray) == 1:
@@ -69,7 +69,7 @@ def checkingTroops(grid, troop):
             for j in range (length-1):
                 #This makes the next coordinates of the ship to be in the direction selected
                 checkingCoordinates = placingTroops(checkingCoordinates, axis, type, grid, value, 0, 1, False)
-                if canIPlaceAUnitHere(checkingCoordinates[0], checkingCoordinates[1], grid) == False:
+                if canIPlaceAUnitHere(checkingCoordinates[0], checkingCoordinates[1], grid, None, False) == False:
                     break
 
         #The only difference to this is that it's for ships that are larger than 1 square wide
@@ -78,22 +78,22 @@ def checkingTroops(grid, troop):
                 for j in range(length-1):
                     checkingCoordinates = placingTroops(checkingCoordinates, axis, type, grid,
                                                         checkingValue, 0, 1, False)
-                    if canIPlaceAUnitHere(checkingCoordinates[0], checkingCoordinates[1], grid) == False:
+                    if canIPlaceAUnitHere(checkingCoordinates[0], checkingCoordinates[1], grid, None, False) == False:
                         break
-                if canIPlaceAUnitHere(checkingCoordinates[0], checkingCoordinates[1], grid) == False:
+                if canIPlaceAUnitHere(checkingCoordinates[0], checkingCoordinates[1], grid, None, False) == False:
                     break
 
                 #This will make the ship turn direction after it completes the first run through 
                 #and go back the other way along an axis directly next to the first one
                 if i != width-1:
                     checkingCoordinates = placingTroops(checkingCoordinates, axis, type, grid, checkingValue, 1, 0, False)
-                    if canIPlaceAUnitHere(checkingCoordinates[0], checkingCoordinates[1], grid) == False:
+                    if canIPlaceAUnitHere(checkingCoordinates[0], checkingCoordinates[1], grid, None, False) == False:
                         break
                     #This makes the ship go the opposite way that it just went
                     checkingValue = -checkingValue
-            if canIPlaceAUnitHere(checkingCoordinates[0], checkingCoordinates[1], grid) == False:
+            if canIPlaceAUnitHere(checkingCoordinates[0], checkingCoordinates[1], grid, None, False) == False:
                 continue  
-        if canIPlaceAUnitHere(checkingCoordinates[0], checkingCoordinates[1], grid) == True:
+        if canIPlaceAUnitHere(checkingCoordinates[0], checkingCoordinates[1], grid, None, False) == True:
             check = True
 
     #The first instance of actually setting a ship on the grid after all checks have been completed
@@ -124,13 +124,29 @@ def placingTroops(coordinates, axis, type, grid, value, num1, num2, placing):
     return coordinates
 
 
-def canIPlaceAUnitHere(y, x, grid):
-    #This makes sure the x coordinate and y coordinate is inside the grid and not lower than 1
-    #It also makes sure that the coordinate chosen is not already occupied by another ship
-    if x < gridSize and x >= 0 and y < gridSize and y >= 0 and grid[y][x] == empty:
-        return True
+def canIPlaceAUnitHere(y, x, grid, foundGame, shooting):
+    if shooting == False:
+        #This makes sure the x coordinate and y coordinate is inside the grid and not lower than 1
+        #It also makes sure that the coordinate chosen is not already occupied by another ship
+        if x < gridSize and x >= 0 and y < gridSize and y >= 0 and grid[y][x] == empty:
+            return True
+        else:
+            return False
+
     else:
-        return False
+        gridReference = coordsToGridReference(x, y)
+        answer = False
+        index = 0
+        while index < len(foundGame.robotShots):
+            if gridReference == foundGame.robotShots[index]:
+                answer = True
+                break
+            else:
+                index += 1
+        if x < gridSize and x >= 0 and y < gridSize and y >= 0 and answer == False:
+            return True
+        else:
+            return False            
 
 
 #Locating the position of the ships using a search algorithm
@@ -161,7 +177,7 @@ def numberOfUnits(unit):
 
 
 #Changes (0, 2) or (8, 5), for example, into (A, 3) or (I, 6) respectively
-def coordsToGridReference(xAxis,yAxis):
+def coordsToGridReference(xAxis, yAxis):
     x = str(chr(ord('A') + xAxis))
     y = str(yAxis + 1)
     #Return a string of just A3 or I6
@@ -169,12 +185,15 @@ def coordsToGridReference(xAxis,yAxis):
 
 
 #Changes (A, 3) or (I, 6), for example, into (0, 2) or (8, 5) respectively
-def gridReferenceToCoords(grid, reference, new):
+def gridReferenceToCoords(grid, reference, new, coords):
     x = int(ord(reference[0])) - 65
     y = int(reference[1:]) - 1
-    #Just returns what the message in the coordinates is
+    #Just returns what the message in the coordinates is or just converts the coordinates
     if new == None:
-        return grid[y][x]
+        if coords == True:
+            return x, y
+        else:
+            return grid[y][x]
     #Changes the coordinates of the grid into the new message
     grid[y][x] = new
     
